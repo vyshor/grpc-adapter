@@ -15,17 +15,25 @@
   </parent>
   <dependencies>
 
+    <!-- Power TAC -->
+    <dependency>
+      <groupId>org.powertac</groupId>
+      <artifactId>broker-core</artifactId>
+      <version>${powertac.version}</version>
+    </dependency>
 
     <!-- Testing; these are NOT transitive -->
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
     </dependency>
 
     <!--ProtoBuf , this is to transmit to other clients-->

@@ -117,8 +117,8 @@ public class GRPCTypeConverterTest
     {
         BalancingTransaction in = ValueGenerator.balancingTransaction;
         PBBalancingTransaction out = conv.convert(in);
-        assertEquals(in.getCharge(), out.getCharge());
-        assertEquals(in.getKWh(), out.getKWh());
+        assertEquals(in.getCharge(), out.getCharge(), 0.0001);
+        assertEquals(in.getKWh(), out.getKWh(), 0.0001);
         assertEquals(in.getPostedTimeslotIndex(), out.getPostedTimeslot());
     }
 
