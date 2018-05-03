@@ -202,7 +202,7 @@ message PBCompetition {
     int64 simulationRate                            = 16 ;
     int64 simulationModulo                          = 17 ;
     repeated string brokers                         = 18 ;
-    repeated PBCustomerInfo customer                = 19 ;
+    repeated PBCustomerInfo customers                = 19 ;
 }                                                              
 message PBBroker {                                               
   int64 id                                          = 1 ;

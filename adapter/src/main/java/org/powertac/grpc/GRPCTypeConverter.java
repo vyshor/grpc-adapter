@@ -153,7 +153,7 @@ public class GRPCTypeConverter
         .setSimulationRate(comp.getSimulationRate())
         .setSimulationModulo(comp.getSimulationModulo())
         .addAllBrokers(comp.getBrokers())
-        .addAllCustomer(convert(comp.getCustomers()))
+        .addAllCustomers(convert(comp.getCustomers()))
         .build();
   }
 

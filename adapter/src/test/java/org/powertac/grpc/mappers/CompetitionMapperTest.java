@@ -47,7 +47,7 @@ public class CompetitionMapperTest implements MapperTestInterface
   {
     PBCompetition out = mapper.map(ptac).build();
     assertEquals(out.getBrokersCount(), ptac.getBrokers().size());
-    assertEquals(out.getCustomerCount(), ptac.getCustomers().size() );
+    assertEquals(out.getCustomersCount(), ptac.getCustomers().size() );
     assertEquals(out.getDownRegulationDiscount(), ptac.getDownRegulationDiscount(), 0.0001);
 
   }
