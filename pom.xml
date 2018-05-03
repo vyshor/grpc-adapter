@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>grpc-broker-proxy</artifactId>
+  <packaging>pom</packaging>
+
+  <name>grpc-broker-proxy</name>
+  <description>adapter between powertac java world and grpc client</description>
+  <url>http://www.powertac.org/</url>
+
+  <parent>
+    <groupId>org.powertac</groupId>
+    <artifactId>powertac-parent</artifactId>
+    <version>1.5.1-SNAPSHOT</version>
+    <relativePath/>
+  </parent>
+
+  <properties>
+    <powertac.version>1.5.1-SNAPSHOT</powertac.version>
+    <maven-shade.version>2.4.3</maven-shade.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <protobuf.version>3.5.1</protobuf.version>
+    <grpc.version>1.10.0</grpc.version><!-- CURRENT_GRPC_VERSION -->
+    <org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
+    <exec.args></exec.args>
+    <syst.args></syst.args>
+  </properties>
+
+  <modules>
+    <module>adapter</module>
+    <module>spi-impl</module>
+  </modules>
+  <!-- Sonatype OSS repo for resolving snapshot dependencies -->
+
+  <repositories>
+    <repository>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <!-- Power TAC -->
+    <dependency>
+      <groupId>org.powertac</groupId>
+      <artifactId>broker-core</artifactId>
+      <version>${powertac.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-jdk8</artifactId> <!-- use mapstruct-jdk8 for Java 8 or higher -->
+      <version>${org.mapstruct.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-processor</artifactId>
+      <version>${org.mapstruct.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.6.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+
+</project>

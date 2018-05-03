@@ -1,0 +1,68 @@
+/*
+ *  Copyright 2009-2018 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an
+ *  "AS IS" BASIS,  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ *  either express or implied. See the License for the specific language
+ *  governing permissions and limitations under the License.
+ */
+
+package org.powertac.grpc.mappers;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Value;
+import de.pascalwhoop.powertac.grpc.PBCompetition;
+import org.junit.Before;
+import org.junit.Test;
+import org.powertac.common.Competition;
+import org.powertac.grpc.ValueGenerator;
+
+import static org.junit.Assert.*;
+
+public class CompetitionMapperTest implements MapperTestInterface
+{
+
+  Competition ptac = ValueGenerator.competition;
+  CompetitionMapper mapper = CompetitionMapper.INSTANCE;
+
+  @Before
+  @Override
+  public void before()
+  {
+    ptac.addBroker(ValueGenerator.broker.getUsername());
+    ptac.addCustomer(ValueGenerator.customerInfo);
+
+  }
+
+  @Test
+  @Override
+  public void testToPB()
+  {
+    PBCompetition out = mapper.map(ptac).build();
+    assertEquals(out.getBrokersCount(), ptac.getBrokers().size());
+    assertEquals(out.getCustomerCount(), ptac.getCustomers().size() );
+    assertEquals(out.getDownRegulationDiscount(), ptac.getDownRegulationDiscount(), 0.0001);
+
+  }
+
+  @Test
+  @Override
+  public void testToPtac()
+  {
+
+  }
+
+  @Test
+  @Override
+  public void roundtripJsonCompare() throws InvalidProtocolBufferException
+  {
+
+  }
+}
