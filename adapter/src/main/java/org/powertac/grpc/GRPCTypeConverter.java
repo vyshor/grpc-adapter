@@ -30,6 +30,8 @@ import org.powertac.common.repo.BrokerRepo;
 import org.powertac.common.repo.TimeslotRepo;
 import org.powertac.common.xml.BrokerConverter;
 import org.powertac.grpc.mappers.BalancingTransactionMapper;
+import org.powertac.grpc.mappers.ClearedTradeMapper;
+import org.powertac.grpc.mappers.MarketPositionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -229,12 +231,13 @@ public class GRPCTypeConverter
 
   public PBClearedTrade convert(ClearedTrade ct)
   {
-    return PBClearedTrade.newBuilder()
-        .setId(ct.getId())
-        .setDateExecuted(ct.getDateExecuted().getMillis())
-        .setExecutionMWh(ct.getExecutionMWh())
-        .setExecutionPrice(ct.getExecutionPrice())
-        .build();
+    return ClearedTradeMapper.INSTANCE.map(ct).build();
+   // return PBClearedTrade.newBuilder()
+   //     .setId(ct.getId())
+   //     .setDateExecuted(ct.getDateExecuted().getMillis())
+   //     .setExecutionMWh(ct.getExecutionMWh())
+   //     .setExecutionPrice(ct.getExecutionPrice())
+   //     .build();
   }
 
   public PBDistributionTransaction convert(DistributionTransaction in)
@@ -263,12 +266,13 @@ public class GRPCTypeConverter
 
   public PBMarketPosition convert(MarketPosition in)
   {
-    return PBMarketPosition.newBuilder()
-        .setId(in.getId())
-        .setBroker(in.getBroker().getUsername())
-        .setOverallBalance(in.getOverallBalance())
-        .setTimeslot(in.getTimeslotIndex())
-        .build();
+    return MarketPositionMapper.INSTANCE.map(in).build();
+//    return PBMarketPosition.newBuilder()
+//        .setId(in.getId())
+//        .setBroker(in.getBroker().getUsername())
+//        .setOverallBalance(in.getOverallBalance())
+//        .setTimeslot(in.getTimeslotIndex())
+//        .build();
 
   }
 

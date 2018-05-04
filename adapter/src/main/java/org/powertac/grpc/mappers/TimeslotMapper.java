@@ -16,56 +16,55 @@
 
 package org.powertac.grpc.mappers;
 
-import de.pascalwhoop.powertac.grpc.PBBroker;
+import de.pascalwhoop.powertac.grpc.PBTimeslot;
+import org.joda.time.Instant;
 import org.mapstruct.*;
-
 import org.mapstruct.factory.Mappers;
-import org.powertac.common.Broker;
-import org.powertac.common.repo.BrokerRepo;
-import org.powertac.grpc.mappers.BrokerMapper.BuilderFactory;
+import org.powertac.common.Timeslot;
+import org.powertac.common.repo.TimeslotRepo;
+import org.powertac.grpc.mappers.TimeslotMapper.BuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
-@Mapper(uses = BuilderFactory.class,
+@Mapper(uses = {BuilderFactory.class, InstantMapper.class},
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public interface BrokerMapper {
+public interface TimeslotMapper {
 
-    BrokerMapper INSTANCE = Mappers.getMapper(BrokerMapper.class);
+    TimeslotMapper INSTANCE = Mappers.getMapper(TimeslotMapper.class);
+
+
+    @Mappings({ })
+    PBTimeslot.Builder map(Timeslot ptacObject);
 
     @Mappings({})
-    Broker map(String username);
+    Timeslot map(PBTimeslot pbObject);
 
-    @Mappings({
-        @Mapping(source = "cashBalance", target = "cash")
-    })
-    PBBroker.Builder map(Broker in);
-
-    default String mapToString(Broker in){
-        return in.getUsername();
+    default int mapToInt(Timeslot ptacObject){
+        return ptacObject.getSerialNumber();
     }
-
 
 
 
     @Component
     class BuilderFactory {
+
         @Autowired
-        BrokerRepo repo;
-
-        PBBroker.Builder builder() {
-            return PBBroker.newBuilder();
-        }
+        TimeslotRepo repo;
 
         @ObjectFactory
-        Broker brokerFromUsername(String username){
-            return repo.findByUsername(username);
+        Timeslot timeslotFromId(int id){
+            return repo.findBySerialNumber(id);
         }
 
-        @ObjectFactory
-        Broker brokerfromPBBroker(PBBroker in){
-            return new Broker(in.getUsername());
+        @ObjectFactory //avoidable with empty constructors
+        Timeslot builder(PBTimeslot in){
+            return new Timeslot(in.getSerialNumber(), new Instant(in.getStartInstant()));
+        }
+
+        PBTimeslot.Builder builder() {
+            return PBTimeslot.newBuilder();
         }
     }
 }

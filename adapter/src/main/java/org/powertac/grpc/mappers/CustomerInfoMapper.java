@@ -16,50 +16,43 @@
 
 package org.powertac.grpc.mappers;
 
-import de.pascalwhoop.powertac.grpc.PBCompetition;
 import de.pascalwhoop.powertac.grpc.PBCustomerInfo;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
-import org.powertac.common.Competition;
 import org.powertac.common.CustomerInfo;
-import org.powertac.grpc.mappers.CompetitionMapper.BuilderFactory;
+import org.powertac.grpc.mappers.CustomerInfoMapper.BuilderFactory;
 
 
-@Mapper(uses = {BuilderFactory.class, InstantMapper.class, BrokerMapper.class, CustomerInfoMapper.class},
+@Mapper(uses = BuilderFactory.class,
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
     nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public interface CompetitionMapper
+public interface CustomerInfoMapper
 {
 
-  CompetitionMapper INSTANCE = Mappers.getMapper(CompetitionMapper.class);
+  CustomerInfoMapper INSTANCE = Mappers.getMapper(CustomerInfoMapper.class);
 
 
-  @Mappings({
-      @Mapping(source = "brokers", target = "brokersList"),
-      @Mapping(source = "customers", target = "customersList")
-  })
-  PBCompetition.Builder map(Competition ptacObject);
+  @Mappings({})
+  PBCustomerInfo.Builder map(CustomerInfo ptacObject);
 
-  @Mappings({
-      @Mapping(source = "brokersList", target = "brokers"),
-      @Mapping(source = "customersList", target = "customers")
-  })
-  Competition map(PBCompetition pbObject);
+  @Mappings({})
+  CustomerInfo map(PBCustomerInfo pbObject);
 
-  PBCustomerInfo map(CustomerInfo ptacObject);
+//  default PBCustomerInfo build(PBCustomerInfo.Builder builder){
+//    return builder.build();
+//  }
 
 
   class BuilderFactory
   {
-    PBCompetition.Builder builder()
+    PBCustomerInfo.Builder builder()
     {
-      return PBCompetition.newBuilder();
+      return PBCustomerInfo.newBuilder();
     }
 
     @ObjectFactory
-    Competition builder(PBCompetition in)
-    {
-      return Competition.newInstance(in.getName());
+    CustomerInfo builder(PBCustomerInfo in){
+      return new CustomerInfo(in.getName(), in.getPopulation());
     }
   }
 }
