@@ -17,41 +17,39 @@
 package org.powertac.grpc.mappers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import de.pascalwhoop.powertac.grpc.PBCustomerInfo;
-import org.junit.Before;
-import org.junit.Test;
-import org.powertac.common.CustomerInfo;
+import de.pascalwhoop.powertac.grpc.PBPowerType;
+import org.powertac.common.enumerations.PowerType;
 import org.powertac.grpc.TestObjectGenerator;
 
 import static org.junit.Assert.*;
 
-public class CustomerInfoMapperTest
-    extends AbstractMapperTest<PBCustomerInfo, CustomerInfo, CustomerInfoMapper>
-    implements MapperTestInterface
+public class PowerTypeMapperTest implements MapperTestInterface
 {
 
+  PowerTypeMapper mapper = PowerTypeMapper.INSTANCE;
 
-  @Before
+  @Override
   public void before()
   {
-    ptac = TestObjectGenerator.customerInfo;
-    mapper = CustomerInfoMapper.INSTANCE;
+
   }
 
-  @Test
+  @Override
   public void testToPB()
   {
-    PBCustomerInfo out = mapper.map(ptac).build();
-    assertEquals(out.getCustomerClassValue(), ptac.getCustomerClass().ordinal());
-    assertEquals(out.getName(), ptac.getName());
-
+    PBPowerType powerType = mapper.map(TestObjectGenerator.powerType).build();
+    assertEquals(powerType.getLabel(), TestObjectGenerator.powerType.toString());
   }
 
-  @Test
+  @Override
   public void testToPtac()
   {
-    CustomerInfo out = mapper.map(mapper.map(ptac).build());
-    assertEquals(out.getCustomerClass().ordinal(), ptac.getCustomerClass().ordinal());
+
   }
 
+  @Override
+  public void roundtripJsonCompare() throws InvalidProtocolBufferException
+  {
+
+  }
 }

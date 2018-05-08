@@ -17,19 +17,11 @@
 package org.powertac.grpc.mappers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 import de.pascalwhoop.powertac.grpc.PBClearedTrade;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.powertac.common.Broker;
 import org.powertac.common.ClearedTrade;
-import org.powertac.common.XMLMessageConverter;
-import org.powertac.common.repo.BrokerRepo;
-import org.powertac.common.repo.TimeslotRepo;
-import org.powertac.grpc.ValueGenerator;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.powertac.grpc.TestObjectGenerator;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -37,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class ClearedTradeMapperTest implements MapperTestInterface
 {
 
-  ClearedTrade ptac = ValueGenerator.clearedTrade;
+  ClearedTrade ptac = TestObjectGenerator.clearedTrade;
   private ClearedTradeMapper mapper = ClearedTradeMapper.INSTANCE;
 
 
@@ -46,8 +38,8 @@ public class ClearedTradeMapperTest implements MapperTestInterface
   public void before()
   {
     ptac = spy(ptac);
-    doReturn(ValueGenerator.timeslot).when(ptac).getTimeslot();
-    //when(ptac.getTimeslot()).thenReturn(ValueGenerator.timeslot);
+    doReturn(TestObjectGenerator.timeslot).when(ptac).getTimeslot();
+    //when(ptac.getTimeslot()).thenReturn(TestObjectGenerator.timeslot);
   }
 
   @Override
@@ -68,7 +60,7 @@ public class ClearedTradeMapperTest implements MapperTestInterface
     ClearedTrade out = mapper.map(intermediate);
 
     assertEquals(ptac.getExecutionMWh(), out.getExecutionMWh(), 0.0001);
-    assertEquals(ptac.getTimeslot().getId(), ValueGenerator.timeslot.getId());
+    assertEquals(ptac.getTimeslot().getId(), TestObjectGenerator.timeslot.getId());
   }
 
   @Override

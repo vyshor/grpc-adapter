@@ -32,6 +32,7 @@ import org.powertac.common.xml.BrokerConverter;
 import org.powertac.grpc.mappers.BalancingTransactionMapper;
 import org.powertac.grpc.mappers.ClearedTradeMapper;
 import org.powertac.grpc.mappers.MarketPositionMapper;
+import org.powertac.grpc.mappers.MarketTransactionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -187,10 +188,10 @@ public class GRPCTypeConverter
         .build();
   }
 
-  public PowerType convert(PBPowerType pbpt)
-  {
-    return PowerType.valueOf(pbpt.getLabel());
-  }
+  //public PowerType convert(PBPowerType pbpt)
+  //{
+  //  return PowerType.valueOf(pbpt.getLabel());
+  //}
 
   public PBProperties convert(Properties serverProps)
   {
@@ -278,13 +279,14 @@ public class GRPCTypeConverter
 
   public PBMarketTransaction convert(MarketTransaction in)
   {
-    return PBMarketTransaction.newBuilder()
-        .setId(in.getId())
-        .setBroker(in.getBroker().getUsername())
-        .setMWh(in.getMWh())
-        .setPrice(in.getPrice())
-        .setTimeslot(in.getTimeslotIndex())
-        .build();
+    return MarketTransactionMapper.INSTANCE.map(in).build();
+//    return PBMarketTransaction.newBuilder()
+//        .setId(in.getId())
+//        .setBroker(in.getBroker().getUsername())
+//        .setMWh(in.getMWh())
+//        .setPrice(in.getPrice())
+//        .setTimeslot(in.getTimeslotIndex())
+//        .build();
 
   }
 

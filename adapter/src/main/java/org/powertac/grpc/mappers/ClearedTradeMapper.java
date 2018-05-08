@@ -55,6 +55,7 @@ public interface ClearedTradeMapper
     @ObjectFactory
     ClearedTrade builder(PBClearedTrade in){
       return new ClearedTrade(in.getTimeslot(), in.getExecutionMWh(), in.getExecutionPrice(), new Instant(in.getDateExecuted()));
+
     }
   }
 }

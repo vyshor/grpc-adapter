@@ -22,9 +22,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.powertac.common.*;
 import org.powertac.common.msg.MarketBootstrapData;
-import org.powertac.common.repo.TimeslotRepo;
 import org.springframework.test.util.ReflectionTestUtils;
-import sun.awt.image.ImageWatched;
 
 import java.util.LinkedList;
 
@@ -39,7 +37,7 @@ public class GRPCTypeConverterTest
     public void testSimpleConversions()
     {
         //BeanUtils.copyProperties(null, null);
-        MarketBootstrapData in = ValueGenerator.marketBootstrapData;
+        MarketBootstrapData in = TestObjectGenerator.marketBootstrapData;
         PBMarketBootstrapData out = conv.convert(in);
         assertEquals(in.getId(), out.getId());
     }
@@ -52,7 +50,7 @@ public class GRPCTypeConverterTest
     @Test
     public void timeslotC()
     {
-        Timeslot timeslot = ValueGenerator.timeslot;
+        Timeslot timeslot = TestObjectGenerator.timeslot;
         PBTimeslot pbTimeslot = conv.convert(timeslot);
         assertEquals(pbTimeslot.getSerialNumber(), timeslot.getSerialNumber());
         assertEquals(pbTimeslot.getStartInstant(), timeslot.getStartInstant().getMillis());
@@ -62,8 +60,8 @@ public class GRPCTypeConverterTest
     @Test
     public void bankTransactionC()
     {
-        BankTransaction spy = Mockito.spy(ValueGenerator.bankTransaction);
-        Mockito.doReturn(new Timeslot(ValueGenerator.INT, new Instant(8))).when(spy).getPostedTimeslot();
+        BankTransaction spy = Mockito.spy(TestObjectGenerator.bankTransaction);
+        Mockito.doReturn(new Timeslot(TestObjectGenerator.INT, new Instant(8))).when(spy).getPostedTimeslot();
         PBBankTransaction out = conv.convert(spy);
         assertEquals(spy.getAmount(), out.getAmount(), 0);
     }
@@ -76,9 +74,9 @@ public class GRPCTypeConverterTest
     @Test
     public void brokerC()
     {
-        Broker in = ValueGenerator.broker;
-        in.setKey(ValueGenerator.STRING);
-        in.setPassword(ValueGenerator.STRING);
+        Broker in = TestObjectGenerator.broker;
+        in.setKey(TestObjectGenerator.STRING);
+        in.setPassword(TestObjectGenerator.STRING);
         PBBroker out = conv.convert(in);
         assertEquals(in.getUsername(), out.getUsername());
     }
@@ -87,7 +85,7 @@ public class GRPCTypeConverterTest
     @Test
     public void basicConversionToPB()
     {
-        TariffSpecification in = ValueGenerator.tariffSpecification;
+        TariffSpecification in = TestObjectGenerator.tariffSpecification;
         in.withExpiration(Instant.now())
             .addSupersedes(1234);
         PBTariffSpecification out = conv.convert(in);
@@ -115,7 +113,7 @@ public class GRPCTypeConverterTest
     @Test
     public void convertBalancingTransaction()
     {
-        BalancingTransaction in = ValueGenerator.balancingTransaction;
+        BalancingTransaction in = TestObjectGenerator.balancingTransaction;
         PBBalancingTransaction out = conv.convert(in);
         assertEquals(in.getCharge(), out.getCharge(), 0.0001);
         assertEquals(in.getKWh(), out.getKWh(), 0.0001);

@@ -16,18 +16,18 @@
 
 package org.powertac.grpc.mappers;
 
-import org.joda.time.Instant;
-import org.mapstruct.*;
+import com.google.protobuf.Message;
+import org.mapstruct.factory.Mappers;
+import org.powertac.common.Competition;
 
-@Mapper()
-public interface InstantMapper
+/**
+ * @param <P>
+ * @param <T>
+ */
+public interface AbstractPbPtacMapper<P extends com.google.protobuf.Message, T>
 {
 
-  default long map(Instant instant){
-    return instant.getMillis();
-  }
+  P.Builder map(T in);
 
-  default Instant map(long time){
-    return new Instant(time);
-  }
+  T map(P in);
 }

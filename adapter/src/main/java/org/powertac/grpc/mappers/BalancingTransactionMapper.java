@@ -29,7 +29,7 @@ import org.powertac.samplebroker.core.BrokerMain;
 @Mapper(uses = BuilderFactory.class,
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public interface BalancingTransactionMapper {
+public interface BalancingTransactionMapper extends AbstractPbPtacMapper<PBBalancingTransaction, BalancingTransaction> {
 
     BalancingTransactionMapper INSTANCE = Mappers.getMapper(BalancingTransactionMapper.class);
 

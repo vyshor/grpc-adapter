@@ -17,20 +17,19 @@
 package org.powertac.grpc.mappers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.util.JsonFormat;
 import de.pascalwhoop.powertac.grpc.PBBroker;
 import org.junit.Before;
 import org.junit.Test;
 import org.powertac.common.Broker;
 import org.powertac.common.repo.BrokerRepo;
-import org.powertac.grpc.ValueGenerator;
+import org.powertac.grpc.TestObjectGenerator;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.*;
 
 public class BrokerMapperTest implements MapperTestInterface
 {
-  Broker ptac = ValueGenerator.broker;
+  Broker ptac = TestObjectGenerator.broker;
   private BrokerMapper mapper = BrokerMapper.INSTANCE;
 
   @Override

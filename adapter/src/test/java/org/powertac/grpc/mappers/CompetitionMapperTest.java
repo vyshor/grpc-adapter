@@ -17,31 +17,31 @@
 package org.powertac.grpc.mappers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Value;
 import de.pascalwhoop.powertac.grpc.PBCompetition;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.validator.TestClassValidator;
 import org.powertac.common.Competition;
-import org.powertac.grpc.ValueGenerator;
+import org.powertac.common.CustomerInfo;
+import org.powertac.common.IdGenerator;
+import org.powertac.common.XMLMessageConverter;
+import org.powertac.grpc.TestObjectGenerator;
 
 import static org.junit.Assert.*;
 
-public class CompetitionMapperTest implements MapperTestInterface
+public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Competition, CompetitionMapper> implements MapperTestInterface
 {
 
-  Competition ptac = ValueGenerator.competition;
-  CompetitionMapper mapper = CompetitionMapper.INSTANCE;
 
   @Before
   @Override
   public void before()
   {
-    ptac.addBroker(ValueGenerator.broker.getUsername());
-    ptac.addCustomer(ValueGenerator.customerInfo);
-
+    IdGenerator.recycle();
+    ptac = TestObjectGenerator.competition;
+    mapper = CompetitionMapper.INSTANCE;
   }
 
-  @Test
   @Override
   public void testToPB()
   {
@@ -52,17 +52,10 @@ public class CompetitionMapperTest implements MapperTestInterface
 
   }
 
-  @Test
   @Override
   public void testToPtac()
   {
 
   }
 
-  @Test
-  @Override
-  public void roundtripJsonCompare() throws InvalidProtocolBufferException
-  {
-
-  }
 }

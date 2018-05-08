@@ -25,10 +25,10 @@ import org.powertac.common.CustomerInfo;
 import org.powertac.grpc.mappers.CompetitionMapper.BuilderFactory;
 
 
-@Mapper(uses = {BuilderFactory.class, InstantMapper.class, BrokerMapper.class, CustomerInfoMapper.class},
+@Mapper(uses = {BuilderFactory.class, InstantMapper.class, BrokerMapper.class, CustomerInfoMapper.class, PowerTypeMapper.class},
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
     nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public interface CompetitionMapper
+public interface CompetitionMapper extends AbstractPbPtacMapper<PBCompetition, Competition>
 {
 
   CompetitionMapper INSTANCE = Mappers.getMapper(CompetitionMapper.class);
@@ -38,15 +38,18 @@ public interface CompetitionMapper
       @Mapping(source = "brokers", target = "brokersList"),
       @Mapping(source = "customers", target = "customersList")
   })
+  @Override
   PBCompetition.Builder map(Competition ptacObject);
 
   @Mappings({
       @Mapping(source = "brokersList", target = "brokers"),
       @Mapping(source = "customersList", target = "customers")
   })
+
+  @Override
   Competition map(PBCompetition pbObject);
 
-  PBCustomerInfo map(CustomerInfo ptacObject);
+  //PBCustomerInfo map(CustomerInfo ptacObject);
 
 
   class BuilderFactory

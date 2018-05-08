@@ -26,30 +26,43 @@ import org.powertac.grpc.mappers.PowerTypeMapper.BuilderFactory;
 @Mapper(uses = BuilderFactory.class,
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
     nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public interface PowerTypeMapper
+public abstract class PowerTypeMapper
 {
+  static PowerTypeMapper INSTANCE = Mappers.getMapper(PowerTypeMapper.class);
 
-  PowerTypeMapper INSTANCE = Mappers.getMapper(PowerTypeMapper.class);
+  @Mappings({
+     // @Mapping(target = "label", ignore = true)
+      @Mapping(target = "label", expression = "java(in.toString())")
+  })
+  public abstract PBPowerType.Builder map(PowerType in);
+
+  PBPowerType build(PowerType in){
+    return map(in).build();
+  }
 
 
-  @Mappings({})
-  PBPowerType.Builder map(PowerType ptacObject);
-
-  @Mappings({})
-  PowerType map(PBPowerType pbObject);
+  @Mappings({
+  })
+  public abstract PowerType map(PBPowerType in);
 
 
   class BuilderFactory
   {
-    PBPowerType.Builder builder()
-    {
+
+    PBPowerType.Builder builder(){
       return PBPowerType.newBuilder();
     }
 
-
     @ObjectFactory
-    PowerType builder(PBPowerType in){
+    PowerType build(PBPowerType in)
+    {
       return PowerType.valueOf(in.getLabel());
     }
+
+    //@ObjectFactory
+    //PBPowerType.Builder builder(PowerType in)
+    //{
+    //  return PBPowerType.newBuilder().setLabel(in.toString());
+    //}
   }
 }

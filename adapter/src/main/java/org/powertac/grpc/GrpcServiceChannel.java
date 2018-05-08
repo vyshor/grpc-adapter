@@ -16,7 +16,6 @@
 
 package org.powertac.grpc;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import de.pascalwhoop.powertac.grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

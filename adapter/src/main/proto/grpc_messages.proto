@@ -70,8 +70,8 @@ service SubmitAdapter {
 // ====================================================
 enum PBCustomerClass {
   SMALL                                           = 0 ;             
-  LARGE                                           = 1 ;             
-} 
+  LARGE                                           = 1 ;
+}
 enum PBResponseTime {
   SECONDS = 0;
   MINUTES = 1;
@@ -98,7 +98,7 @@ enum PBStatus {
   unsupported                                     = 8 ;                                         
 }
 
-//enum PBPowerType {
+//enum PBPowerTypeLabel {
 //  CONSUMPTION                                     = 0 ;
 //  PRODUCTION                                      = 1 ;
 //  STORAGE                                         = 2 ;
@@ -357,9 +357,9 @@ message PBBalanceReport {
    int32 timeslotIndex                              = 3 ;
 }
 message PBPowerType {
-    string label                                    = 1 ;
+    string label                          = 1 ;
 }
-message PBCustomerBootstrapData {                                
+message PBCustomerBootstrapData {
    int64 id                                         = 1 ;
    string customerName                              = 2 ;
    PBPowerType powerType                            = 3 ;

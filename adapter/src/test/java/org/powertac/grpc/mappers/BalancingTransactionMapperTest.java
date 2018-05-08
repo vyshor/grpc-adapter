@@ -17,33 +17,40 @@
 package org.powertac.grpc.mappers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.sun.xml.internal.ws.server.sei.ValueGetter;
 import de.pascalwhoop.powertac.grpc.PBBalancingTransaction;
 import org.junit.Before;
 import org.junit.Test;
 import org.powertac.common.BalancingTransaction;
-import org.powertac.common.Broker;
 import org.powertac.common.repo.BrokerRepo;
-import org.powertac.grpc.ValueGenerator;
+import org.powertac.grpc.TestObjectGenerator;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
 
-public class BalancingTransactionMapperTest implements MapperTestInterface
+public class BalancingTransactionMapperTest
+    extends AbstractMapperTest<PBBalancingTransaction, BalancingTransaction, BalancingTransactionMapper>
+    implements MapperTestInterface
 {
 
   @Before
-  public void before(){
-    BrokerMapperImpl inst = (BrokerMapperImpl) BrokerMapper.INSTANCE;
-    BrokerMapper.BuilderFactory bf = (BrokerMapper.BuilderFactory) ReflectionTestUtils.getField(inst, "builderFactory");
+  public void before()
+  {
+    mapper = BalancingTransactionMapper.INSTANCE;
+    ptac = TestObjectGenerator.balancingTransaction;
+
+    //mocking broker repositories
+    BrokerMapper bmInst = BrokerMapper.INSTANCE;
+    BrokerMapper.BuilderFactory bf = (BrokerMapper.BuilderFactory) ReflectionTestUtils.getField(bmInst, "builderFactory");
     BrokerRepo repo = new BrokerRepo();
     ReflectionTestUtils.setField(bf, "repo", repo);
-    repo.add(ValueGenerator.broker);
+    repo.add(TestObjectGenerator.broker);
   }
 
   @Test
   public void testToPB()
   {
-    BalancingTransaction in = ValueGenerator.balancingTransaction;
+    BalancingTransaction in = TestObjectGenerator.balancingTransaction;
     PBBalancingTransaction out = BalancingTransactionMapper.INSTANCE.map(in).build();
     assertEquals(in.getCharge(), out.getCharge(), 0.0001);
     assertEquals(in.getBroker().getUsername(), out.getBroker());
@@ -54,17 +61,10 @@ public class BalancingTransactionMapperTest implements MapperTestInterface
   public void testToPtac()
   {
 
-    PBBalancingTransaction in = BalancingTransactionMapper.INSTANCE.map(ValueGenerator.balancingTransaction).build();
+    PBBalancingTransaction in = BalancingTransactionMapper.INSTANCE.map(TestObjectGenerator.balancingTransaction).build();
     BalancingTransaction out = BalancingTransactionMapper.INSTANCE.map(in);
     assertEquals(in.getCharge(), out.getCharge(), 0.0001);
     assertEquals(in.getBroker(), out.getBroker().getUsername());
-  }
-
-  @Override
-  @Test
-  public void roundtripJsonCompare() throws InvalidProtocolBufferException
-  {
-
   }
 
 
