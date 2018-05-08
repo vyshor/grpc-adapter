@@ -29,10 +29,7 @@ import org.powertac.common.msg.*;
 import org.powertac.common.repo.BrokerRepo;
 import org.powertac.common.repo.TimeslotRepo;
 import org.powertac.common.xml.BrokerConverter;
-import org.powertac.grpc.mappers.BalancingTransactionMapper;
-import org.powertac.grpc.mappers.ClearedTradeMapper;
-import org.powertac.grpc.mappers.MarketPositionMapper;
-import org.powertac.grpc.mappers.MarketTransactionMapper;
+import org.powertac.grpc.mappers.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -292,14 +289,15 @@ public class GRPCTypeConverter
 
   public PBOrderbook convert(Orderbook in)
   {
-    return PBOrderbook.newBuilder()
-        .setId(in.getId())
-        .addAllAsks(convert(in.getAsks()))
-        .addAllBids(convert(in.getBids()))
-        .setTimeslot(in.getTimeslotIndex())
-        .setClearingPrice(in.getClearingPrice())
-        .setDateExecuted(in.getDateExecuted().getMillis())
-        .build();
+    return OrderbookMapper.INSTANCE.map(in).build();
+//    return PBOrderbook.newBuilder()
+//        .setId(in.getId())
+//        .addAllAsks(convert(in.getAsks()))
+//        .addAllBids(convert(in.getBids()))
+//        .setTimeslot(in.getTimeslotIndex())
+//        .setClearingPrice(in.getClearingPrice())
+//        .setDateExecuted(in.getDateExecuted().getMillis())
+//        .build();
   }
 
   private Iterable<? extends PBOrderbookOrder> convert(SortedSet<OrderbookOrder> asks)
@@ -358,7 +356,8 @@ public class GRPCTypeConverter
 
   public PBBalanceReport convert(BalanceReport in)
   {
-    return basicConversionToPB(in, PBBalanceReport.newBuilder()).build();
+    return BalanceReportMapper.INSTANCE.map(in).build();
+    //return basicConversionToPB(in, PBBalanceReport.newBuilder()).build();
   }
 
   public PBCustomerBootstrapData convert(CustomerBootstrapData in)

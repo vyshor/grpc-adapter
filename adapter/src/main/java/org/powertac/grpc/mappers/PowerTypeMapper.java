@@ -31,25 +31,24 @@ public abstract class PowerTypeMapper
   static PowerTypeMapper INSTANCE = Mappers.getMapper(PowerTypeMapper.class);
 
   @Mappings({
-     // @Mapping(target = "label", ignore = true)
+      // @Mapping(target = "label", ignore = true)
       @Mapping(target = "label", expression = "java(in.toString())")
   })
   public abstract PBPowerType.Builder map(PowerType in);
 
-  PBPowerType build(PowerType in){
+  PBPowerType build(PowerType in)
+  {
     return map(in).build();
   }
 
-
-  @Mappings({
-  })
+  @Mappings({ })
   public abstract PowerType map(PBPowerType in);
-
 
   class BuilderFactory
   {
 
-    PBPowerType.Builder builder(){
+    PBPowerType.Builder builder()
+    {
       return PBPowerType.newBuilder();
     }
 

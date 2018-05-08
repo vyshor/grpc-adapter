@@ -16,39 +16,29 @@
 
 package org.powertac.grpc.mappers;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import de.pascalwhoop.powertac.grpc.PBCompetition;
+import de.pascalwhoop.powertac.grpc.PBOrderbook;
 import org.junit.Before;
-import org.junit.Test;
-import org.junit.validator.TestClassValidator;
-import org.powertac.common.Competition;
-import org.powertac.common.CustomerInfo;
 import org.powertac.common.IdGenerator;
-import org.powertac.common.XMLMessageConverter;
+import org.powertac.common.Orderbook;
 import org.powertac.grpc.TestObjectGenerator;
 
 import static org.junit.Assert.*;
 
-public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Competition, CompetitionMapper> implements MapperTestInterface
+public class OrderbookMapperTest extends AbstractMapperTest<PBOrderbook, Orderbook, OrderbookMapper> implements MapperTestInterface
 {
-
 
   @Before
   @Override
   public void before()
   {
     super.before();
-    ptac = TestObjectGenerator.competition;
-    mapper = CompetitionMapper.INSTANCE;
+    ptac = TestObjectGenerator.orderbook;
+    mapper = OrderbookMapper.INSTANCE;
   }
 
   @Override
   public void testToPB()
   {
-    PBCompetition out = mapper.map(ptac).build();
-    assertEquals(out.getBrokersCount(), ptac.getBrokers().size());
-    assertEquals(out.getCustomersCount(), ptac.getCustomers().size() );
-    assertEquals(out.getDownRegulationDiscount(), ptac.getDownRegulationDiscount(), 0.0001);
 
   }
 
@@ -57,5 +47,4 @@ public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Com
   {
 
   }
-
 }

@@ -19,6 +19,7 @@ package org.powertac.grpc.mappers;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import org.junit.Test;
+import org.powertac.common.IdGenerator;
 import org.powertac.common.XMLMessageConverter;
 
 import java.util.regex.Pattern;
@@ -27,6 +28,10 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractMapperTest<P extends Message, T, M extends AbstractPbPtacMapper<P, T>>
 {
+
+  public void before(){
+    IdGenerator.recycle();
+  }
 
   XMLMessageConverter converter = new XMLMessageConverter();
   T ptac;
