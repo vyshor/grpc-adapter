@@ -16,18 +16,20 @@
 
 package org.powertac.grpc.mappers;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import de.pascalwhoop.powertac.grpc.PBCompetition;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.validator.TestClassValidator;
 import org.powertac.common.Competition;
-import org.powertac.common.CustomerInfo;
-import org.powertac.common.IdGenerator;
 import org.powertac.common.XMLMessageConverter;
 import org.powertac.grpc.TestObjectGenerator;
 
-import static org.junit.Assert.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Competition, CompetitionMapper> implements MapperTestInterface
 {
@@ -47,7 +49,7 @@ public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Com
   {
     PBCompetition out = mapper.map(ptac).build();
     assertEquals(out.getBrokersCount(), ptac.getBrokers().size());
-    assertEquals(out.getCustomersCount(), ptac.getCustomers().size() );
+    assertEquals(out.getCustomersCount(), ptac.getCustomers().size());
     assertEquals(out.getDownRegulationDiscount(), ptac.getDownRegulationDiscount(), 0.0001);
 
   }
@@ -56,6 +58,28 @@ public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Com
   public void testToPtac()
   {
 
+  }
+
+  @Test
+  public void testSizeCompare() throws IOException
+  {
+
+    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+    InputStream is = classloader.getResourceAsStream("test_competition.xml");
+    java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+    String xml = s.hasNext() ? s.next() : "";
+
+    XMLMessageConverter conv = new XMLMessageConverter();
+    conv.afterPropertiesSet();
+
+    //String xml2 = conv.toXML(TestObjectGenerator.competition);
+    //assertEquals(xml, xml2);
+
+    Competition comp = (Competition) conv.fromXML(xml);
+    PBCompetition pbComp = mapper.map(comp).build();
+    System.out.println(pbComp.getSerializedSize());
+    System.out.println(xml.getBytes().length);
+    assertTrue(pbComp.getSerializedSize()<xml.getBytes().length);
   }
 
 }
