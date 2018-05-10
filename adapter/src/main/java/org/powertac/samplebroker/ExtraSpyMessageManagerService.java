@@ -18,42 +18,30 @@ package org.powertac.samplebroker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.powertac.common.msg.SimPause;
-import org.powertac.common.msg.SimResume;
-import org.powertac.common.msg.TimeslotComplete;
-import org.powertac.common.msg.TimeslotUpdate;
+import org.powertac.common.Order;
 import org.powertac.grpc.GrpcServiceChannel;
 import org.powertac.samplebroker.interfaces.BrokerContext;
 import org.powertac.samplebroker.interfaces.Initializable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * additional class that is used for the GRPC adapter to get a hold of all the extra interesting messages that the sample-broker doesn't usually hand out to the developers
- */
 @Service
-public class GameManagerService implements Initializable
+public class ExtraSpyMessageManagerService implements Initializable
 {
   static private Logger log = LogManager.getLogger(ContextManagerService.class);
   @Autowired
   GrpcServiceChannel comm;
 
   @Override
-  public void initialize(BrokerContext broker){
+  public void initialize(BrokerContext broker)
+  {
 
   }
 
-  public synchronized void handleMessage(SimPause message){
-    comm.gameStub.handlePBSimPause(comm.converter.convert(message));
+  //orders from other brokers
+  public synchronized void handleMessage(Order msg){
+    comm.spyStub.handlePBOrder(comm.converter.convert(msg));
+  }
 
-  }
-  public synchronized void handleMessage(SimResume message){
-    comm.gameStub.handlePBSimResume(comm.converter.convert(message));
-  }
-  public synchronized void handleMessage(TimeslotUpdate message){
-    comm.gameStub.handlePBTimeslotUpdate(comm.converter.convert(message));
-  }
-  public synchronized void handleMessage(TimeslotComplete message){
-    comm.gameStub.handlePBTimeslotComplete(comm.converter.convert(message));
-  }
+
 }

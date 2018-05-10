@@ -452,6 +452,10 @@ public class GRPCTypeConverter
     return null;
   }
 
+  public PBOrder convert(Order msg)
+  {
+    return OrderMapper.INSTANCE.map(msg).build();
+  }
 
 
 //    public  PBPowerType convert(PowerType pt){

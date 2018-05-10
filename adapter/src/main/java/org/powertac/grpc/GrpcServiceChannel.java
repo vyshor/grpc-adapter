@@ -34,6 +34,8 @@ import java.util.Date;
 public class GrpcServiceChannel implements Initializable
 
 {
+  static private Logger log = LogManager.getLogger(GrpcServiceChannel.class);
+
   @Autowired
   public GRPCTypeConverter converter;
   ManagedChannel channel;
@@ -49,7 +51,7 @@ public class GrpcServiceChannel implements Initializable
   public PortfolioManagerServiceGrpc.PortfolioManagerServiceBlockingStub portfolioStub;
   public  GameServiceGrpc.GameServiceBlockingStub                        gameStub;
   private ConnectionServiceGrpc.ConnectionServiceBlockingStub            connStub;
-  static private                                                         Logger log = LogManager.getLogger(ContextManagerService.class);
+  public ExtraSpyMessageManagerServiceGrpc.ExtraSpyMessageManagerServiceBlockingStub spyStub;
 
   @Override
   public void initialize(BrokerContext broker)
@@ -67,6 +69,7 @@ public class GrpcServiceChannel implements Initializable
         portfolioStub = PortfolioManagerServiceGrpc.newBlockingStub(channel);
         connStub = ConnectionServiceGrpc.newBlockingStub(channel);
         gameStub = GameServiceGrpc.newBlockingStub(channel);
+        spyStub = ExtraSpyMessageManagerServiceGrpc.newBlockingStub(channel);
 
         connStub.pingpong(Empty.newBuilder().build());
         isEnabled = true;

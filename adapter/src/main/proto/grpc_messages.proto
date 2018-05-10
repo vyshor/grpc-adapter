@@ -4,6 +4,8 @@ option java_multiple_files = true;
 
 // SERVICES
 // ====================================================
+
+//mapping of the samplebrokers ContextManagerService callbacks "handleMessage(X)"
 service ContextManagerService      {
     //in java, these are overloaded with different class types.
     //GRPC doesn't allow same names so we name them as so
@@ -15,6 +17,7 @@ service ContextManagerService      {
     rpc handlePBProperties         (PBProperties)         returns  (Empty) {} //TODO handle java properties file of server, needed?
 }
 
+//mapping of the samplebrokers MarketManagerService callbacks "handleMessage(X)"
 service MarketManagerService            {
     rpc handlePBActivate                (PBActivate                ) returns  (Empty){}
     rpc handlePBCompetition             (PBCompetition             ) returns  (Empty){}
@@ -31,23 +34,30 @@ service MarketManagerService            {
     rpc handlePBBalanceReport           (PBBalanceReport           ) returns  (Empty){}
 }
 
-service PortfolioManagerService                                                                      {
-
+//mapping of the samplebrokers PortfolioManagerService callbacks "handleMessage(X)"
+service PortfolioManagerService         {
     rpc handlePBCustomerBootstrapData   (PBCustomerBootstrapData ) returns  (Empty) {}
     rpc handlePBTariffSpecification     (PBTariffSpecification   ) returns  (Empty) {}
     rpc handlePBTariffStatus            (PBTariffStatus          ) returns  (Empty) {}
     rpc handlePBTariffTransaction       (PBTariffTransaction     ) returns  (Empty) {}
     rpc handlePBTariffRevoke            (PBTariffRevoke          ) returns  (Empty) {}
     rpc handlePBBalancingControlEvent   (PBBalancingControlEvent ) returns  (Empty) {}
-
 }
 
+// handles messages that are "meta", i.e. regarding the game itself
 service GameService {
     rpc handlePBTimeslotComplete        (PBTimeslotComplete      ) returns (Empty) {}
     rpc handlePBTimeslotUpdate          (PBTimeslotUpdate        ) returns (Empty) {}
     rpc handlePBSimPause                (PBSimPause              ) returns (Empty) {}
     rpc handlePBSimResume               (PBSimResume             ) returns (Empty) {}
 
+}
+
+//these are messages that other brokers send and that a spy broker
+//may receive because he gets all messages forwarded that others sent to the server.
+service ExtraSpyMessageManagerService {
+    rpc handlePBOrder                   (PBOrder                 ) returns (Empty) {}
+    rpc handlePBTariffSpec              (PBTariffSpecification   ) returns (Empty) {}
 }
 
 service ConnectionService

@@ -17,16 +17,14 @@
 package org.powertac.grpc.mappers;
 
 import de.pascalwhoop.powertac.grpc.PBCompetition;
+import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 import org.powertac.common.Competition;
 import org.powertac.common.XMLMessageConverter;
 import org.powertac.grpc.TestObjectGenerator;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Competition, CompetitionMapper> implements MapperTestInterface
 {
 
+  XMLMessageConverter conv = new XMLMessageConverter();
 
   @Before
   @Override
@@ -42,6 +41,8 @@ public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Com
     super.before();
     ptac = TestObjectGenerator.competition;
     mapper = CompetitionMapper.INSTANCE;
+
+    conv.afterPropertiesSet();
   }
 
   @Override
@@ -61,16 +62,11 @@ public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Com
   }
 
   @Test
-  public void testSizeCompare() throws IOException
+  public void testSizeCompare()
   {
 
-    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-    InputStream is = classloader.getResourceAsStream("test_competition.xml");
-    java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-    String xml = s.hasNext() ? s.next() : "";
+    String xml = getTestCompetitionXmlString();
 
-    XMLMessageConverter conv = new XMLMessageConverter();
-    conv.afterPropertiesSet();
 
     //String xml2 = conv.toXML(TestObjectGenerator.competition);
     //assertEquals(xml, xml2);
@@ -79,7 +75,70 @@ public class CompetitionMapperTest extends AbstractMapperTest<PBCompetition, Com
     PBCompetition pbComp = mapper.map(comp).build();
     System.out.println(pbComp.getSerializedSize());
     System.out.println(xml.getBytes().length);
-    assertTrue(pbComp.getSerializedSize()<xml.getBytes().length);
+    assertTrue(pbComp.getSerializedSize() < xml.getBytes().length);
+  }
+
+  private String getTestCompetitionXmlString()
+  {
+    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+    InputStream is = classloader.getResourceAsStream("test_competition.xml");
+    java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+    return s.hasNext() ? s.next() : "";
+  }
+
+  //@Test
+  public void testSerialisationSpeed()
+  {
+
+    String xml = getTestCompetitionXmlString();
+    Instant start = Instant.now();
+    Competition comp = (Competition) conv.fromXML(xml);
+    for (int i = 0; i < 1000; i++) {
+      conv.toXML(comp);
+    }
+    Instant stop = Instant.now();
+    long xStreamDiff = stop.minus(start.getMillis()).getMillis();
+
+
+    start = Instant.now();
+    for (int i = 0; i < 1000; i++) {
+      mapper.map(comp).build();
+      //comp = mapper.map(pbcomp);
+    }
+    stop = Instant.now();
+    long grpcDiff = stop.minus(start.getMillis()).getMillis();
+
+    System.out.println("XStream time for 1000 serialisations: " + xStreamDiff);
+    System.out.println("Grpc time for 1000 serialisations   : " + grpcDiff);
+
+
+  }
+
+
+  //@Test
+  public void testDeserialisation()
+  {
+
+    String xml = getTestCompetitionXmlString();
+    Instant start = Instant.now();
+    Competition comp = (Competition) conv.fromXML(xml);
+    for (int i = 0; i < 1000; i++) {
+      conv.toXML(comp);
+    }
+    Instant stop = Instant.now();
+    long xStreamDiff = stop.minus(start.getMillis()).getMillis();
+
+
+    start = Instant.now();
+    PBCompetition pbcomp = mapper.map(comp).build();
+    for (int i = 0; i < 1000; i++) {
+      mapper.map(pbcomp);
+    }
+    stop = Instant.now();
+    long grpcDiff = stop.minus(start.getMillis()).getMillis();
+
+    System.out.println("XStream time for 1000 deserialisations: " + xStreamDiff);
+    System.out.println("Grpc time for 1000 deserialisations   : " + grpcDiff);
   }
 
 }
