@@ -1,0 +1,20 @@
+<settings>
+    <mirrors>
+        <mirror>
+            <id>maven-cache-central</id>
+            <url>http://localhost/mirrors/central</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>maven-cache-sonatype</id>
+            <url>http://localhost/mirrors/sonatype</url>
+            <mirrorOf>https://oss.sonatype.org/content/repositories/snapshots/</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>maven-cache-jenkins</id>
+            <url>http://localhost/mirrors/jenkins</url>
+            <mirrorOf>repo.jenkins-ci.org</mirrorOf>
+        </mirror>
+    </mirrors>
+</settings>
+

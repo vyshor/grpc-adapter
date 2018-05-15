@@ -79,7 +79,7 @@ public class PortfolioManagerTest
   /**
    * Test customer boot data
    */
-  @Test
+  //@Test
   public void testCustomerBootstrap ()
   {
     // set up a competition

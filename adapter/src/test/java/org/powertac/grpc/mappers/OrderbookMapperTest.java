@@ -18,33 +18,48 @@ package org.powertac.grpc.mappers;
 
 import de.pascalwhoop.powertac.grpc.PBOrderbook;
 import org.junit.Before;
-import org.powertac.common.IdGenerator;
+import org.junit.runner.RunWith;
 import org.powertac.common.Orderbook;
+import org.powertac.common.repo.TimeslotRepo;
+import org.powertac.common.spring.SpringApplicationContext;
 import org.powertac.grpc.TestObjectGenerator;
+import org.powertac.samplebroker.core.BrokerMessageReceiver;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
-public class OrderbookMapperTest extends AbstractMapperTest<PBOrderbook, Orderbook, OrderbookMapper> implements MapperTestInterface
-{
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:test-config.xml"})
+public class OrderbookMapperTest extends AbstractMapperTest<PBOrderbook, Orderbook, OrderbookMapper> implements MapperTestInterface {
 
-  @Before
-  @Override
-  public void before()
-  {
-    super.before();
-    ptac = TestObjectGenerator.orderbook;
-    mapper = OrderbookMapper.INSTANCE;
-  }
+    @Before
+    @Override
+    public void before() {
+        super.before();
+        ptac = TestObjectGenerator.orderbook;
+        mapper = OrderbookMapper.INSTANCE;
+        //doesn't work because xstream needs the proper object
+        //ptac = Mockito.spy(ptac);
+        //doReturn(TestObjectGenerator.timeslot).when(ptac).getTimeslot();
 
-  @Override
-  public void testToPB()
-  {
 
-  }
+        TimeslotRepo repo = (TimeslotRepo) SpringApplicationContext.getBean("timeslotRepo");
+        doReturn(TestObjectGenerator.timeslot).when(repo).findBySerialNumber(1);
 
-  @Override
-  public void testToPtac()
-  {
 
-  }
+    }
+
+    @Override
+    public void testToPB() {
+
+    }
+
+    @Override
+    public void testToPtac() {
+
+    }
 }

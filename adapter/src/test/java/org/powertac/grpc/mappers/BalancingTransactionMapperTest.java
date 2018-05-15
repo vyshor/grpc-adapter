@@ -16,8 +16,6 @@
 
 package org.powertac.grpc.mappers;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.sun.xml.internal.ws.server.sei.ValueGetter;
 import de.pascalwhoop.powertac.grpc.PBBalancingTransaction;
 import org.junit.Before;
 import org.junit.Test;

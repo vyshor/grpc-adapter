@@ -39,6 +39,10 @@ import java.util.*;
 
 /**
  * Helper class that converts all types forth and back between PB versions and powerTAC originals
+ * 
+ * All "old" ways to convert (i.e not using a "Mapper" based on MapStruct) should slowly be phased out, whenever a
+ * method is needed!
+ * They don't work! 
  */
 @Service
 public class GRPCTypeConverter
@@ -391,9 +395,7 @@ public class GRPCTypeConverter
 
   public PBTimeslotUpdate convert(TimeslotUpdate in)
   {
-    return basicConversionToPB(in, PBTimeslotUpdate.newBuilder())
-        .setPostedTime(in.getPostedTime().getMillis())
-        .build();
+    return TimeslotUpdateMapper.INSTANCE.map(in).build();
   }
 
   public PBTariffSpecification convert(TariffSpecification in)

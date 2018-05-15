@@ -40,6 +40,7 @@ public class ExtraSpyMessageManagerService implements Initializable
 
   //orders from other brokers
   public synchronized void handleMessage(Order msg){
+    log.info("received spy messages for order");
     comm.spyStub.handlePBOrder(comm.converter.convert(msg));
   }
 

@@ -26,47 +26,43 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class AbstractMapperTest<P extends Message, T, M extends AbstractPbPtacMapper<P, T>>
-{
+public abstract class AbstractMapperTest<P extends Message, T, M extends AbstractPbPtacMapper<P, T>> {
 
-  public void before(){
-    IdGenerator.recycle();
-  }
+    public void before() {
+        IdGenerator.recycle();
+    }
 
-  XMLMessageConverter converter = new XMLMessageConverter();
-  T ptac;
-  M mapper;
+    XMLMessageConverter converter = new XMLMessageConverter();
+    T ptac;
+    M mapper;
 
-  AbstractMapperTest()
-  {
-    converter.afterPropertiesSet();
-  }
+    AbstractMapperTest() {
+        converter.afterPropertiesSet();
+    }
 
 
-  public T copyByXml(T obj)
-  {
-    String xml = converter.toXML(obj);
-    return (T) converter.fromXML(xml);
-  }
+    public T copyByXml(T obj) {
+        String xml = converter.toXML(obj);
+        return (T) converter.fromXML(xml);
+    }
 
 
-  @Test
-  public void roundtripJsonCompare() throws InvalidProtocolBufferException
-  {
-    //create xml from original object
-    String inXml = converter.toXML(ptac);
-    // map once to protobuf and back
-    P pbObject = (P) mapper.map(ptac).build();
-    T roundtripObject = mapper.map(pbObject);
-    //create new xml from roundtrip object
-    //expect both xml strings to be identical (because the data shouldn't change)
-    String outXml = converter.toXML(roundtripObject);
+    @Test
+    public void roundtripJsonCompare() throws InvalidProtocolBufferException {
+        //create xml from original object
+        String inXml = converter.toXML(ptac);
+        // map once to protobuf and back
+        P pbObject = (P) mapper.map(ptac).build();
+        T roundtripObject = mapper.map(pbObject);
+        //create new xml from roundtrip object
+        //expect both xml strings to be identical (because the data shouldn't change)
+        String outXml = converter.toXML(roundtripObject);
 
-    //remove all IDs, because they are always changing due to the nature of the ID generator
-    Pattern ids = Pattern.compile("id=\"[0-9]+\"");
-    inXml = ids.matcher(inXml).replaceAll("id=\"X\"");
-    outXml = ids.matcher(outXml).replaceAll("id=\"X\"");
-    assertEquals(inXml, outXml);
+        //remove all IDs, because they are always changing due to the nature of the ID generator
+        Pattern ids = Pattern.compile("id=\"[0-9]+\"");
+        inXml = ids.matcher(inXml).replaceAll("id=\"X\"");
+        outXml = ids.matcher(outXml).replaceAll("id=\"X\"");
+        assertEquals(inXml, outXml);
 
-  }
+    }
 }
