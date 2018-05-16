@@ -36,6 +36,9 @@ public interface TariffSpecificationMapper extends AbstractPbPtacMapper<PBTariff
     })
     TariffSpecification map(PBTariffSpecification in, @MappingTarget TariffSpecification out);
 
+    //@AfterMapping
+    //PBTariffSpecification map(PBTariffSpecification.Builder in);
+
     default PBTariffSpecification map(PBTariffSpecification.Builder tariffSpecification){
         return tariffSpecification.build();
     }
