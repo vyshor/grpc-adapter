@@ -400,22 +400,23 @@ public class GRPCTypeConverter
 
   public PBTariffSpecification convert(TariffSpecification in)
   {
-    long expiration = 0;
-    try{
-      expiration = in.getExpiration().getMillis();
-    }
-    catch (Exception e){
-
-    }
-
-    return basicConversionToPB(in, PBTariffSpecification.newBuilder())
-        .setBroker(in.getBroker().getUsername())
-        .setExpiration(expiration)
-        .setPowerType(convert(in.getPowerType()))
-        .addAllRates(listConvert(in.getRates(),Rate.class,  PBRate.class))
-        .addAllRegulationRates(listConvert(in.getRegulationRates(), RegulationRate.class, PBRegulationRate.class))
-        .addAllSupersedes(in.getSupersedes())
-        .build();
+    return TariffSpecificationMapper.INSTANCE.map(in).build();
+//    long expiration = 0;
+//    try{
+//      expiration = in.getExpiration().getMillis();
+//    }
+//    catch (Exception e){
+//
+//    }
+//
+//    return basicConversionToPB(in, PBTariffSpecification.newBuilder())
+//        .setBroker(in.getBroker().getUsername())
+//        .setExpiration(expiration)
+//        .setPowerType(convert(in.getPowerType()))
+//        .addAllRates(listConvert(in.getRates(),Rate.class,  PBRate.class))
+//        .addAllRegulationRates(listConvert(in.getRegulationRates(), RegulationRate.class, PBRegulationRate.class))
+//        .addAllSupersedes(in.getSupersedes())
+//        .build();
   }
 
   /**

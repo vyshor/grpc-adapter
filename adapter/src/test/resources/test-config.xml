@@ -9,6 +9,12 @@
 	       >
 
 
+  <bean id="customerRepo"
+        class="org.mockito.Mockito"
+        factory-method="mock">
+    <constructor-arg value="org.powertac.common.repo.CustomerRepo" />
+  </bean>
+
   <bean id="timeslotRepo"
         class="org.mockito.Mockito"
         factory-method="mock">

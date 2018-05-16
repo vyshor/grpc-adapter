@@ -58,7 +58,7 @@ public abstract class CustomerInfoMapper
 //  }
 
 
-  class BuilderFactory
+  class BuilderFactory extends AbstractBuilderFactory<PBCustomerInfo, CustomerInfo>
   {
     PBCustomerInfo.Builder builder()
     {
@@ -67,7 +67,8 @@ public abstract class CustomerInfoMapper
 
     @ObjectFactory
     CustomerInfo builder(PBCustomerInfo in){
-      return new CustomerInfo(in.getName(), in.getPopulation());
+      CustomerInfo out =  new CustomerInfo(in.getName(), in.getPopulation());
+      return builderSetId(in, out);
     }
   }
 }

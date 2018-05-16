@@ -38,14 +38,16 @@ public interface BalanceReportMapper extends AbstractPbPtacMapper<PBBalanceRepor
   @Mappings({})
   BalanceReport map(PBBalanceReport in, @MappingTarget BalanceReport out);
 
-  class BuilderFactory{
+  class BuilderFactory extends AbstractBuilderFactory<PBBalanceReport, BalanceReport>{
     PBBalanceReport.Builder builder() {
       return PBBalanceReport.newBuilder();
     }
 
     @ObjectFactory
     BalanceReport builder(PBBalanceReport in){
-      return new BalanceReport(in.getTimeslotIndex(), in.getNetImbalance());
+
+      BalanceReport out =  new BalanceReport(in.getTimeslotIndex(), in.getNetImbalance());
+      return builderSetId(in, out);
     }
 
   }

@@ -49,8 +49,6 @@ public interface CompetitionMapper extends AbstractPbPtacMapper<PBCompetition, C
   @Override
   Competition map(PBCompetition pbObject);
 
-  //PBCustomerInfo map(CustomerInfo ptacObject);
-
 
   class BuilderFactory
   {

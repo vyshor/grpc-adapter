@@ -212,7 +212,7 @@ message PBCompetition {
     int64 simulationRate                            = 16 ;
     int64 simulationModulo                          = 17 ;
     repeated string brokers                         = 18 ;
-    repeated PBCustomerInfo customers                = 19 ;
+    repeated PBCustomerInfo customers               = 19 ;
 }                                                              
 message PBBroker {                                               
   int64 id                                          = 1 ;
@@ -367,7 +367,7 @@ message PBBalanceReport {
    int32 timeslotIndex                              = 3 ;
 }
 message PBPowerType {
-    string label                          = 1 ;
+    string label                                    = 1 ;
 }
 message PBCustomerBootstrapData {
    int64 id                                         = 1 ;
@@ -432,13 +432,16 @@ message PBTariffStatus {
     PBStatus status                                 = 4 ; // TODO enum not sure if works
 }
 message PBTariffTransaction {
-   PBTxType txType                                  = 2 ;
-   PBCustomerInfo customerInfo                      = 3 ;
-   int32 customerCount                              = 4 ;
-   double kWh                                       = 5 ;
-   double charge                                    = 6 ;
-   bool regulation                                  = 7 ;
-   PBTariffSpecification tariffSpec                 = 8 ;
+   int64 id                                         = 1 ;
+   string broker                                    = 2 ;
+   int32  postedTimeslot                            = 3 ;
+   PBTxType txType                                  = 4 ;
+   PBCustomerInfo customerInfo                      = 5 ;
+   int32 customerCount                              = 6 ;
+   double kWh                                       = 7 ;
+   double charge                                    = 8 ;
+   bool regulation                                  = 9 ;
+   PBTariffSpecification tariffSpec                 = 10 ;
 }                                                              
 message PBBalancingControlEvent {                                
    double kwh                                       = 1 ;
