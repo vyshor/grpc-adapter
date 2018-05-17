@@ -18,6 +18,7 @@ package org.powertac.grpc.mappers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
+import org.junit.Before;
 import org.junit.Test;
 import org.powertac.common.IdGenerator;
 import org.powertac.common.XMLMessageConverter;
@@ -40,6 +41,10 @@ public abstract class AbstractMapperTest<P extends Message, T, M extends Abstrac
         converter.afterPropertiesSet();
     }
 
+    @Before
+    public void setupIdGenerator(){
+        IdGenerator.setPrefix(4);
+    }
 
     public T copyByXml(T obj) {
         String xml = converter.toXML(obj);
@@ -58,10 +63,10 @@ public abstract class AbstractMapperTest<P extends Message, T, M extends Abstrac
         //expect both xml strings to be identical (because the data shouldn't change)
         String outXml = converter.toXML(roundtripObject);
 
-        //remove all IDs, because they are always changing due to the nature of the ID generator
-        Pattern ids = Pattern.compile("id=\"[0-9]+\"");
-        inXml = ids.matcher(inXml).replaceAll("id=\"X\"");
-        outXml = ids.matcher(outXml).replaceAll("id=\"X\"");
+        ////remove all IDs, because they are always changing due to the nature of the ID generator
+        //Pattern ids = Pattern.compile("id=\"[0-9]+\"");
+        //inXml = ids.matcher(inXml).replaceAll("id=\"X\"");
+        //outXml = ids.matcher(outXml).replaceAll("id=\"X\"");
         assertEquals(inXml, outXml);
 
     }

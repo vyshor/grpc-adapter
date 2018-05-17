@@ -19,30 +19,52 @@ import java.util.List;
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
         imports = {Instant.class},
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public interface TariffSpecificationMapper extends AbstractPbPtacMapper<PBTariffSpecification, TariffSpecification> {
+public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<PBTariffSpecification, TariffSpecification> {
 
-    TariffSpecificationMapper INSTANCE = Mappers.getMapper(TariffSpecificationMapper.class);
+    public static TariffSpecificationMapper INSTANCE = Mappers.getMapper(TariffSpecificationMapper.class);
 
 
     @Mappings({
             @Mapping(source = "rates", target = "ratesList"),
-            @Mapping(source = "regulationRates" , target = "regulationRatesList")
+            @Mapping(source = "regulationRates" , target = "regulationRatesList"),
+            @Mapping(source = "supersedes", target = "supersedesList", ignore = true)
     })
     @Override
-    PBTariffSpecification.Builder map(TariffSpecification ptacObject);
+    public abstract PBTariffSpecification.Builder map(TariffSpecification ptacObject);
+
+    @AfterMapping
+    void addPrimitiveSupersedesList (TariffSpecification in, @MappingTarget PBTariffSpecification.Builder out){
+        if(in.getSupersedes() == null){
+            return;
+        }
+        for (Long s: in.getSupersedes()){
+            out.addSupersedes(s);
+        }
+    }
 
     @Mappings({
-            @Mapping(expression = "java( in.getExpiration()== 0? null : new Instant(in.getExpiration()) )", target = "expiration")
+            @Mapping(expression = "java( in.getExpiration()== 0? null : new Instant(in.getExpiration()) )", target = "expiration"),
+            //@Mapping(source = "ratesList", target = "rates"),
+            //@Mapping(source = "regulationRatesList", target = "regulationRates"),
+            @Mapping(source = "supersedesList", target = "supersedes")
     })
-    TariffSpecification map(PBTariffSpecification in, @MappingTarget TariffSpecification out);
+    public abstract TariffSpecification map(PBTariffSpecification in);
+    //public abstract TariffSpecification map(PBTariffSpecification in, @MappingTarget TariffSpecification out);
 
-    //@AfterMapping
-    //PBTariffSpecification map(PBTariffSpecification.Builder in);
 
-    default PBTariffSpecification map(PBTariffSpecification.Builder tariffSpecification){
+    @AfterMapping
+    void cleanExpiration(PBTariffSpecification in, @MappingTarget TariffSpecification out){
+        if (in.getExpiration() == 0){
+            out.withExpiration(null);
+        }
+    }
+
+    public PBTariffSpecification map(PBTariffSpecification.Builder tariffSpecification){
         return tariffSpecification.build();
     }
 
+    // ---------------------------------------------------------------
+    //helper builder factory class
     class BuilderFactory extends AbstractBuilderFactory<PBTariffSpecification, TariffSpecification>{
 
         @Autowired
@@ -61,6 +83,7 @@ public interface TariffSpecificationMapper extends AbstractPbPtacMapper<PBTariff
             PowerType pt = PowerTypeMapper.INSTANCE.map(in.getPowerType());
             TariffSpecification out = new TariffSpecification(broker, pt);
             List<PBRate> rates = in.getRatesList();
+            //doing manually because I cannot target the same list by two sources
             for(PBRate r: rates){
                out.addRate(rm.map(r));
             }
@@ -68,6 +91,9 @@ public interface TariffSpecificationMapper extends AbstractPbPtacMapper<PBTariff
             for (PBRegulationRate r: rrates){
                out.addRate(rrm.map(r));
             }
+            //hacky way to make out.supersedes not null
+            out.addSupersedes(0l);
+            out.getSupersedes().clear();
             return builderSetId(in, out);
         }
     }

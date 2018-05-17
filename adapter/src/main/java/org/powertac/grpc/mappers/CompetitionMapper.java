@@ -50,7 +50,7 @@ public interface CompetitionMapper extends AbstractPbPtacMapper<PBCompetition, C
   Competition map(PBCompetition pbObject);
 
 
-  class BuilderFactory
+  class BuilderFactory extends AbstractBuilderFactory<PBCompetition, Competition>
   {
     PBCompetition.Builder builder()
     {
@@ -60,7 +60,8 @@ public interface CompetitionMapper extends AbstractPbPtacMapper<PBCompetition, C
     @ObjectFactory
     Competition builder(PBCompetition in)
     {
-      return Competition.newInstance(in.getName());
+      Competition out =  Competition.newInstance(in.getName());
+      return builderSetId(in, out);
     }
   }
 }

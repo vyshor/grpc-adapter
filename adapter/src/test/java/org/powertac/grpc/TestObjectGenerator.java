@@ -45,6 +45,8 @@ public class TestObjectGenerator
   public static BalanceReport balanceReport = new BalanceReport(INT, DOUBLE);
   public static Broker broker = new Broker("broker username", BOOLEAN, BOOLEAN);
   public static TariffSpecification tariffSpecification = new TariffSpecification(broker, PowerType.CONSUMPTION);
+
+
   public static BalancingControlEvent balancingControlEvent = new BalancingControlEvent(tariffSpecification, DOUBLE, DOUBLE, INT);
   public static BalancingTransaction balancingTransaction = new BalancingTransaction(broker, INT, DOUBLE, DOUBLE);
   public static BankTransaction bankTransaction = new BankTransaction(broker, DOUBLE, INT);
@@ -87,6 +89,9 @@ public class TestObjectGenerator
     competition.addBroker(STRING);
     competition.addBroker(STRING);
     competition.addBroker(STRING);
+
+    //adding supersedes to tariffSpec
+    tariffSpecification.addSupersedes(123);
   }
 
 }

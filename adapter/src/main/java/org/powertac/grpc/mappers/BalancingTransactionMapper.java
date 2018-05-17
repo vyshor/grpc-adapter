@@ -46,7 +46,7 @@ public interface BalancingTransactionMapper extends AbstractPbPtacMapper<PBBalan
 
 
 
-    class BuilderFactory {
+    class BuilderFactory extends AbstractBuilderFactory<PBBalancingTransaction, BalancingTransaction> {
         PBBalancingTransaction.Builder builder() {
             return PBBalancingTransaction.newBuilder();
         }
@@ -54,7 +54,9 @@ public interface BalancingTransactionMapper extends AbstractPbPtacMapper<PBBalan
         @ObjectFactory
         public BalancingTransaction createBalancingTransaction(PBBalancingTransaction in){
             Broker broker  = BrokerMapper.INSTANCE.map(in.getBroker());
-            return new BalancingTransaction(broker, in.getPostedTimeslot(), in.getKWh(), in.getCharge());
+            BalancingTransaction out =  new BalancingTransaction(broker, in.getPostedTimeslot(), in.getKWh(), in.getCharge());
+            return builderSetId(in, out);
+
         }
     }
 }

@@ -47,7 +47,7 @@ public interface OrderbookMapper extends AbstractPbPtacMapper<PBOrderbook, Order
   @Mappings({})
   Orderbook map(PBOrderbook in, @MappingTarget Orderbook out);
 
-  class BuilderFactory
+  class BuilderFactory extends AbstractBuilderFactory<PBOrderbook, Orderbook>
   {
     PBOrderbook.Builder builder(){
       return PBOrderbook.newBuilder();
@@ -56,7 +56,8 @@ public interface OrderbookMapper extends AbstractPbPtacMapper<PBOrderbook, Order
     @ObjectFactory
     Orderbook build(PBOrderbook in)
     {
-      return new Orderbook(in.getTimeslot(), in.getClearingPrice(), new Instant(in.getDateExecuted()));
+      Orderbook out = new Orderbook(in.getTimeslot(), in.getClearingPrice(), new Instant(in.getDateExecuted()));
+      return builderSetId(in, out);
     }
 
   }
