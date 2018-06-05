@@ -64,6 +64,7 @@ public abstract class AbstractMapperTest<P extends Message, T, M extends Abstrac
         String outXml = converter.toXML(roundtripObject);
 
         ////remove all IDs, because they are always changing due to the nature of the ID generator
+        // not doing anymore because the IDs should really not be different.
         //Pattern ids = Pattern.compile("id=\"[0-9]+\"");
         //inXml = ids.matcher(inXml).replaceAll("id=\"X\"");
         //outXml = ids.matcher(outXml).replaceAll("id=\"X\"");

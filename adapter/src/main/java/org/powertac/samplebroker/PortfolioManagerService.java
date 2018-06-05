@@ -220,7 +220,7 @@ public class PortfolioManagerService
    */
   public synchronized void handleMessage(CustomerBootstrapData cbd)
   {
-    //comm.portfolioStub.handlePBCustomerBootstrapData(comm.converter.convert(cbd));
+    comm.portfolioStub.handlePBCustomerBootstrapData(comm.converter.convert(cbd));
   }
 
   /**

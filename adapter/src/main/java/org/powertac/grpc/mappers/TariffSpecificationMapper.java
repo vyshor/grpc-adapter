@@ -43,7 +43,6 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
     }
 
     @Mappings({
-            @Mapping(expression = "java( in.getExpiration()== 0? null : new Instant(in.getExpiration()) )", target = "expiration"),
             //@Mapping(source = "ratesList", target = "rates"),
             //@Mapping(source = "regulationRatesList", target = "regulationRates"),
             @Mapping(source = "supersedesList", target = "supersedes")
@@ -52,12 +51,7 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
     //public abstract TariffSpecification map(PBTariffSpecification in, @MappingTarget TariffSpecification out);
 
 
-    @AfterMapping
-    void cleanExpiration(PBTariffSpecification in, @MappingTarget TariffSpecification out){
-        if (in.getExpiration() == 0){
-            out.withExpiration(null);
-        }
-    }
+
 
     public PBTariffSpecification map(PBTariffSpecification.Builder tariffSpecification){
         return tariffSpecification.build();
@@ -78,6 +72,7 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
         }
 
         @ObjectFactory
+        //TODO not really along the concept of the framework here to do so much by hand.
         TariffSpecification builder(PBTariffSpecification in) {
             Broker broker = repo.findByUsername(in.getBroker());
             PowerType pt = PowerTypeMapper.INSTANCE.map(in.getPowerType());
@@ -94,6 +89,7 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
             //hacky way to make out.supersedes not null
             out.addSupersedes(0l);
             out.getSupersedes().clear();
+            out.withExpiration(in.getExpiration()== 0? null : new Instant(in.getExpiration()));
             return builderSetId(in, out);
         }
     }

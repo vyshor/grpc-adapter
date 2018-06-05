@@ -50,6 +50,7 @@ service GameService {
     rpc handlePBTimeslotUpdate          (PBTimeslotUpdate        ) returns (Empty) {}
     rpc handlePBSimPause                (PBSimPause              ) returns (Empty) {}
     rpc handlePBSimResume               (PBSimResume             ) returns (Empty) {}
+    rpc handlePBSimEnd                  (PBSimEnd                ) returns (Empty) {}
 
 }
 
@@ -471,4 +472,7 @@ message PBSimPause{
 }
 message PBSimResume{
     int64 start                                     = 1 ;
+}
+
+message PBSimEnd{
 }

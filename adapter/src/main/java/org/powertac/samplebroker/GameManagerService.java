@@ -18,10 +18,7 @@ package org.powertac.samplebroker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.powertac.common.msg.SimPause;
-import org.powertac.common.msg.SimResume;
-import org.powertac.common.msg.TimeslotComplete;
-import org.powertac.common.msg.TimeslotUpdate;
+import org.powertac.common.msg.*;
 import org.powertac.grpc.GrpcServiceChannel;
 import org.powertac.samplebroker.interfaces.BrokerContext;
 import org.powertac.samplebroker.interfaces.Initializable;
@@ -45,8 +42,8 @@ public class GameManagerService implements Initializable
 
   public synchronized void handleMessage(SimPause message){
     comm.gameStub.handlePBSimPause(comm.converter.convert(message));
-
   }
+
   public synchronized void handleMessage(SimResume message){
     comm.gameStub.handlePBSimResume(comm.converter.convert(message));
   }
@@ -55,5 +52,9 @@ public class GameManagerService implements Initializable
   }
   public synchronized void handleMessage(TimeslotComplete message){
     comm.gameStub.handlePBTimeslotComplete(comm.converter.convert(message));
+  }
+
+  public synchronized void handleMessage(SimEnd message){
+    comm.gameStub.handlePBSimEnd(comm.converter.convert(message));
   }
 }

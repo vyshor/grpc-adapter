@@ -137,28 +137,7 @@ public class GRPCTypeConverter
 
   public PBCompetition convert(Competition comp)
   {
-
-    return PBCompetition.newBuilder()
-        .setId(comp.getId())
-        .setName(comp.getName())
-        .setDescription(comp.getDescription())
-        .setPomId(comp.getPomId())
-        .setTimeslotLength(comp.getTimeslotLength())
-        .setBootstrapTimeslotCount(comp.getBootstrapTimeslotCount())
-        .setBootstrapDiscardedTimeslots(comp.getBootstrapDiscardedTimeslots())
-        .setMinimumTimeslotCount(comp.getMinimumTimeslotCount())
-        .setExpectedTimeslotCount(comp.getExpectedTimeslotCount())
-        .setTimeslotsOpen(comp.getTimeslotsOpen())
-        .setDeactivateTimeslotsAhead(comp.getDeactivateTimeslotsAhead())
-        .setMinimumOrderQuantity(comp.getMinimumOrderQuantity())
-        .setSimulationBaseTime(comp.getSimulationBaseTime().getMillis())
-        .setTimezoneOffset(comp.getTimezoneOffset())
-        .setLatitude(comp.getLatitude())
-        .setSimulationRate(comp.getSimulationRate())
-        .setSimulationModulo(comp.getSimulationModulo())
-        .addAllBrokers(comp.getBrokers())
-        .addAllCustomers(convert(comp.getCustomers()))
-        .build();
+      return CompetitionMapper.INSTANCE.map(comp).build();
   }
 
   public PBCustomerInfo convert(CustomerInfo ci)
@@ -366,9 +345,7 @@ public class GRPCTypeConverter
 
   public PBCustomerBootstrapData convert(CustomerBootstrapData in)
   {
-    return basicConversionToPB(in, PBCustomerBootstrapData.newBuilder())
-        .addAllNetUsage(arrayToList(in.getNetUsage()))
-        .build();
+      return CustomerBootstrapDataMapper.INSTANCE.map(in).build();
   }
 
   public PBRate convert(Rate in){
@@ -458,6 +435,11 @@ public class GRPCTypeConverter
   public PBOrder convert(Order msg)
   {
     return OrderMapper.INSTANCE.map(msg).build();
+  }
+
+
+  public PBSimEnd convert(SimEnd msg) {
+      return SimEndMapper.INSTANCE.map(msg).build();
   }
 
 
