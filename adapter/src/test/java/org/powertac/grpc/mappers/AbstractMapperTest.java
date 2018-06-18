@@ -69,6 +69,5 @@ public abstract class AbstractMapperTest<P extends Message, T, M extends Abstrac
         //inXml = ids.matcher(inXml).replaceAll("id=\"X\"");
         //outXml = ids.matcher(outXml).replaceAll("id=\"X\"");
         assertEquals(inXml, outXml);
-
     }
 }

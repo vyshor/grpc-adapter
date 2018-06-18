@@ -51,7 +51,12 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
     //public abstract TariffSpecification map(PBTariffSpecification in, @MappingTarget TariffSpecification out);
 
 
-
+    @AfterMapping
+    void cleanExpiration(PBTariffSpecification in, @MappingTarget TariffSpecification out){
+        if (in.getExpiration() == 0){
+            out.withExpiration(null);
+        }
+    }
 
     public PBTariffSpecification map(PBTariffSpecification.Builder tariffSpecification){
         return tariffSpecification.build();
@@ -89,7 +94,6 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
             //hacky way to make out.supersedes not null
             out.addSupersedes(0l);
             out.getSupersedes().clear();
-            out.withExpiration(in.getExpiration()== 0? null : new Instant(in.getExpiration()));
             return builderSetId(in, out);
         }
     }

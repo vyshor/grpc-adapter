@@ -182,7 +182,7 @@ public class MarketManagerService
    */
   public synchronized void handleMessage(MarketBootstrapData data)
   {
-    //comm.marketStub.handlePBMarketBootstrapData(comm.converter.convert(data));
+    comm.marketStub.handlePBMarketBootstrapData(comm.converter.convert(data));
   }
 
   /**

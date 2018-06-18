@@ -16,10 +16,12 @@
 
 package org.powertac.samplebroker;
 
+import de.pascalwhoop.powertac.grpc.PBBrokerAccept;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.powertac.common.msg.*;
 import org.powertac.grpc.GrpcServiceChannel;
+import org.powertac.grpc.mappers.BrokerAcceptMapper;
 import org.powertac.samplebroker.interfaces.BrokerContext;
 import org.powertac.samplebroker.interfaces.Initializable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,5 +58,10 @@ public class GameManagerService implements Initializable
 
   public synchronized void handleMessage(SimEnd message){
     comm.gameStub.handlePBSimEnd(comm.converter.convert(message));
+  }
+
+  public synchronized void handleMessage(BrokerAccept message){
+    PBBrokerAccept msg = BrokerAcceptMapper.INSTANCE.map(message).build();
+    comm.gameStub.handlePBBrokerAccept(msg);
   }
 }

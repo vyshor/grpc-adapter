@@ -7,6 +7,7 @@ import com.google.protobuf.util.JsonFormat;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.powertac.common.IdGenerator;
 import org.powertac.grpc.GrpcServiceChannel;
 
 import java.lang.reflect.Field;
@@ -37,6 +38,7 @@ public abstract class AbstractBuilderFactory<P extends Message, T> {
 
         try {
             long id = (long) in.getField(idDescriptor);
+            id = ensureId(id);
             //FieldUtils.writeDeclaredField(out, "id", id);
             Field idField = getIdField(out.getClass());
             if (idField == null){
@@ -53,6 +55,15 @@ public abstract class AbstractBuilderFactory<P extends Message, T> {
             }
         }
         return out;
+    }
+
+    /**
+     * if the id is 0
+     * @param id
+     * @return
+     */
+    private long ensureId(long id) {
+        return id == 0 ? IdGenerator.createId() : id;
     }
 
     private void warnAboutNotHavingIdField() {

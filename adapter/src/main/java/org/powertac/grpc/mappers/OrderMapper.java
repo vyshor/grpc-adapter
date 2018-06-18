@@ -52,7 +52,7 @@ public interface OrderMapper extends AbstractPbPtacMapper<PBOrder, Order>
   @Mappings({})
   Order map(PBOrder in);
 
-  class BuilderFactory
+  class BuilderFactory extends AbstractBuilderFactory<PBOrder, Order>
   {
     PBOrder.Builder builder()
     {
@@ -63,7 +63,9 @@ public interface OrderMapper extends AbstractPbPtacMapper<PBOrder, Order>
     Order build(PBOrder in)
     {
       Broker b = BrokerMapper.INSTANCE.map(in.getBroker());
-      return new Order(b, in.getTimeslot(), in.getMWh(), in.getLimitPrice() );
+      //TODO missing the ID!
+      Order o = new Order(b, in.getTimeslot(), in.getMWh(), in.getLimitPrice() );
+      return builderSetId(in, o);
     }
   }
 

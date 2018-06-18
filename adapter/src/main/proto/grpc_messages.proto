@@ -51,7 +51,7 @@ service GameService {
     rpc handlePBSimPause                (PBSimPause              ) returns (Empty) {}
     rpc handlePBSimResume               (PBSimResume             ) returns (Empty) {}
     rpc handlePBSimEnd                  (PBSimEnd                ) returns (Empty) {}
-
+    rpc handlePBBrokerAccept            (PBBrokerAccept          ) returns (Empty) {}
 }
 
 //these are messages that other brokers send and that a spy broker
@@ -67,9 +67,10 @@ service ConnectionService
 }
 
 // answers to the server from the (Python/whatever) client
-service SubmitAdapter {
-    rpc submitOrder                     (PBOrder) returns (PBCallCompleted){}
-    rpc submitTariffSpec                (PBTariffSpecification) returns (PBCallCompleted){}
+service SubmitService {
+    rpc submitOrder                     (Empty) returns (stream PBOrder){}
+    rpc submitTariffSpec                (Empty)   returns (stream PBTariffSpecification){}
+    rpc submitTariffRevoke              (Empty)   returns (stream PBTariffRevoke){}
     //TODO all possible submissions
 }
 
@@ -412,6 +413,11 @@ message PBRegulationRate {
   double upRegulationPayment                        = 3;
   double downRegulationPayment                      = 4;
   PBResponseTime response                           = 5;
+}
+message PBBrokerAccept {
+  int32 prefix                                      = 1;
+  string key                                        = 2;
+  int64 serverTime                                  = 3;
 }
 message PBTariffSpecification {                                  
    int64 id                                         = 1 ;

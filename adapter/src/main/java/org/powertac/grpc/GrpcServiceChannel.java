@@ -17,74 +17,123 @@
 package org.powertac.grpc;
 
 import de.pascalwhoop.powertac.grpc.*;
+import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.powertac.common.config.ConfigurableValue;
-import org.powertac.samplebroker.ContextManagerService;
+import org.powertac.samplebroker.SubmitService;
 import org.powertac.samplebroker.interfaces.BrokerContext;
 import org.powertac.samplebroker.interfaces.Initializable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 @Service
 public class GrpcServiceChannel implements Initializable
 
 {
-  static private Logger log = LogManager.getLogger(GrpcServiceChannel.class);
+    static private Logger log = LogManager.getLogger(GrpcServiceChannel.class);
 
-  @Autowired
-  public GRPCTypeConverter converter;
-  ManagedChannel channel;
-  @ConfigurableValue(valueType= "String", description="Host DNS/IP to connect to with the GRPC client")
-  private String host = "localhost";
-  @ConfigurableValue(valueType= "Integer", description="Port to connect to with the GRPC client")
-  private Integer port = 50051;
-  @ConfigurableValue(valueType= "Integer", description="GRPC conection retry limit")
-  private Integer retryLimit = 0;
+    @Autowired
+    public GRPCTypeConverter converter;
+    ManagedChannel channel;
+    @ConfigurableValue(valueType = "String", description = "Host DNS/IP to connect to with the GRPC client")
+    private String host = "localhost";
+    @ConfigurableValue(valueType = "Integer", description = "Port to connect to with the GRPC client")
+    private Integer port = 50053;
+    @ConfigurableValue(valueType = "Integer", description = "GRPC conection retry limit")
+    private Integer retryLimit = 60;
 
-  public ContextManagerServiceGrpc.ContextManagerServiceBlockingStub     contextStub;
-  public MarketManagerServiceGrpc.MarketManagerServiceBlockingStub       marketStub;
-  public PortfolioManagerServiceGrpc.PortfolioManagerServiceBlockingStub portfolioStub;
-  public  GameServiceGrpc.GameServiceBlockingStub                        gameStub;
-  private ConnectionServiceGrpc.ConnectionServiceBlockingStub            connStub;
-  public ExtraSpyMessageManagerServiceGrpc.ExtraSpyMessageManagerServiceBlockingStub spyStub;
+    private final Object lock = new Object();
+    private Thread serverThread;
 
-  @Override
-  public void initialize(BrokerContext broker)
-  {
-    int trial = 1;
-    boolean isEnabled = false;
-    while (!isEnabled && trial != retryLimit) {
-      try{
-        channel = ManagedChannelBuilder.forAddress(this.host, this.port).usePlaintext(true).build();
-        log.info("Channel opening to Python GRPC Server");
-        log.info("#####################################");
+    public SubmitServiceGrpc.SubmitServiceBlockingStub submitStub;
+    public ContextManagerServiceGrpc.ContextManagerServiceBlockingStub contextStub;
+    public MarketManagerServiceGrpc.MarketManagerServiceBlockingStub marketStub;
+    public PortfolioManagerServiceGrpc.PortfolioManagerServiceBlockingStub portfolioStub;
+    public GameServiceGrpc.GameServiceBlockingStub gameStub;
+    private ConnectionServiceGrpc.ConnectionServiceBlockingStub connStub;
+    public ExtraSpyMessageManagerServiceGrpc.ExtraSpyMessageManagerServiceBlockingStub spyStub;
 
-        contextStub = ContextManagerServiceGrpc.newBlockingStub(channel);
-        marketStub = MarketManagerServiceGrpc.newBlockingStub(channel);
-        portfolioStub = PortfolioManagerServiceGrpc.newBlockingStub(channel);
-        connStub = ConnectionServiceGrpc.newBlockingStub(channel);
-        gameStub = GameServiceGrpc.newBlockingStub(channel);
-        spyStub = ExtraSpyMessageManagerServiceGrpc.newBlockingStub(channel);
+    //receiving components need to be manually triggered at boot
+    @Autowired
+    SubmitService submitService;
 
-        connStub.pingpong(Empty.newBuilder().build());
-        isEnabled = true;
-      }
-      catch (Exception e){
-        System.out.println("GRPC connection refused " + trial++);
+    @Override
+    public void initialize(BrokerContext broker) {
         try {
-          Thread.sleep(1000);
+            startServer();
+            synchronized (lock) {
+                lock.wait();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        catch (InterruptedException e1) {
-          e1.printStackTrace();
-        }
-      }
     }
-  }
+
+    private void startServer() {
+        serverThread = new Thread(() -> {
+            try {
+                ManagedChannelBuilder builder = ManagedChannelBuilder.forAddress(this.host, this.port);
+                channel = builder
+                        .usePlaintext(true)
+                        .build();
+
+
+                log.info("Channel opening to Python GRPC Server");
+                log.info("#####################################");
+
+                submitStub = SubmitServiceGrpc.newBlockingStub(channel);
+                contextStub = ContextManagerServiceGrpc.newBlockingStub(channel);
+                marketStub = MarketManagerServiceGrpc.newBlockingStub(channel);
+                portfolioStub = PortfolioManagerServiceGrpc.newBlockingStub(channel);
+                connStub = ConnectionServiceGrpc.newBlockingStub(channel);
+                gameStub = GameServiceGrpc.newBlockingStub(channel);
+                spyStub = ExtraSpyMessageManagerServiceGrpc.newBlockingStub(channel);
+
+                //to connect with the server
+                runPing();
+
+                connectReceiving(channel);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        serverThread.start();
+    }
+
+    private void runPing() {
+        int retries = 0;
+        while (retries < retryLimit) {
+            try {
+                System.out.println("connecting to grpc...");
+                connStub.pingpong(Empty.newBuilder().build());
+                System.out.println("GRPC CONNECTED!");
+                synchronized (lock) {
+                    lock.notifyAll();
+                }
+                break;
+            } catch (StatusRuntimeException ex) {
+                log.warn("GRPC partner not available");
+                retries++;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void connectReceiving(ManagedChannel channel) {
+        if (channel.getState(true).equals(ConnectivityState.READY)) {
+            submitService.connectReceiving();
+        }
+        channel.notifyWhenStateChanged(ConnectivityState.READY, () -> submitService.connectReceiving());
+    }
 
 
 }

@@ -230,7 +230,7 @@ public class PortfolioManagerService
    */
   public synchronized void handleMessage(TariffSpecification spec)
   {
-    //comm.portfolioStub.handlePBTariffSpecification(comm.converter.convert(spec));
+    comm.portfolioStub.handlePBTariffSpecification(comm.converter.convert(spec));
   }
 
   /**
@@ -248,6 +248,8 @@ public class PortfolioManagerService
    */
   public synchronized void handleMessage(TariffTransaction ttx)
   {
+    comm.portfolioStub.handlePBTariffTransaction(comm.converter.convert(ttx));
+
     // make sure we have this tariff
     TariffSpecification newSpec = ttx.getTariffSpec();
     if (newSpec == null) {
@@ -305,6 +307,9 @@ public class PortfolioManagerService
    */
   public synchronized void handleMessage(TariffRevoke tr)
   {
+    //sending to python component
+    comm.portfolioStub.handlePBTariffRevoke(comm.converter.convert(tr));
+
     Broker source = tr.getBroker();
     log.info("Revoke tariff " + tr.getTariffId()
         + " from " + tr.getBroker().getUsername());

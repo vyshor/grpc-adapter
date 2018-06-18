@@ -56,7 +56,7 @@ public class SampleBrokerTest
     // set the time
     baseTime = new DateTime(2011, 2, 1, 0, 0, 0, 0, DateTimeZone.UTC).toInstant();
 
-    // initialize the broker under test
+    // connectReceiving the broker under test
     broker = new PowerTacBroker();
 
     // set up the autowired dependencies

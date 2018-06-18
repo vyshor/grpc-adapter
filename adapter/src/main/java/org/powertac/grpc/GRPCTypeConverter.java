@@ -71,6 +71,7 @@ public class GRPCTypeConverter
         .build();
   }
 
+
   public PBBankTransaction convert(BankTransaction in)
   {
     return PBBankTransaction.newBuilder()
@@ -187,14 +188,7 @@ public class GRPCTypeConverter
 
   public PBMarketBootstrapData convert(MarketBootstrapData in)
   {
-
-    //PBMarketBootstrapData out = basicConversionToPB(PBMarketBootstrapData.class, in, PBMarketBootstrapData.newBuilder());
-    //return PBMarketBootstrapData.newBuilder().mergeFrom(out)
-    return PBMarketBootstrapData.newBuilder()
-        .setId(in.getId())
-        .addAllMwh(arrayToList(in.getMwh()))
-        .addAllMarketPrice(arrayToList(in.getMarketPrice()))
-        .build();
+      return MarketBootstrapDataMapper.INSTANCE.map(in).build();
   }
 
   public PBBalancingTransaction convert(BalancingTransaction tx)
@@ -378,23 +372,13 @@ public class GRPCTypeConverter
   public PBTariffSpecification convert(TariffSpecification in)
   {
     return TariffSpecificationMapper.INSTANCE.map(in).build();
-//    long expiration = 0;
-//    try{
-//      expiration = in.getExpiration().getMillis();
-//    }
-//    catch (Exception e){
-//
-//    }
-//
-//    return basicConversionToPB(in, PBTariffSpecification.newBuilder())
-//        .setBroker(in.getBroker().getUsername())
-//        .setExpiration(expiration)
-//        .setPowerType(convert(in.getPowerType()))
-//        .addAllRates(listConvert(in.getRates(),Rate.class,  PBRate.class))
-//        .addAllRegulationRates(listConvert(in.getRegulationRates(), RegulationRate.class, PBRegulationRate.class))
-//        .addAllSupersedes(in.getSupersedes())
-//        .build();
   }
+
+  public PBTariffRevoke convert(TariffRevoke in){
+    return TariffRevokeMapper.INSTANCE.map(in).build();
+  }
+
+  public PBTariffTransaction convert(TariffTransaction in){return TariffTransactionMapper.INSTANCE.map(in).build();}
 
   /**
    * Generates a list of
