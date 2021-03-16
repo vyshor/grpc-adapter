@@ -60,7 +60,7 @@ public interface BrokerMapper {
 
         @ObjectFactory
         Broker brokerFromUsername(String username){
-            return repo.findByUsername(username);
+            return new Broker(username);
         }
 
         @ObjectFactory

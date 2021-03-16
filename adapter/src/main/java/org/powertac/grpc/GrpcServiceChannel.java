@@ -42,7 +42,7 @@ public class GrpcServiceChannel implements Initializable
     @ConfigurableValue(valueType = "String", description = "Host DNS/IP to connect to with the GRPC client")
     private String host = "localhost";
     @ConfigurableValue(valueType = "Integer", description = "Port to connect to with the GRPC client")
-    private Integer port = 50053;
+    private Integer port = 50051;
     @ConfigurableValue(valueType = "Integer", description = "GRPC conection retry limit")
     private Integer retryLimit = 60;
 

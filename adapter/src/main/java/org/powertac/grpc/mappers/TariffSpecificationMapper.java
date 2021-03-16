@@ -11,6 +11,7 @@ import org.powertac.common.Broker;
 import org.powertac.common.TariffSpecification;
 import org.powertac.common.enumerations.PowerType;
 import org.powertac.common.repo.BrokerRepo;
+import org.powertac.common.repo.TariffRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -43,9 +44,9 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
     }
 
     @Mappings({
-            //@Mapping(source = "ratesList", target = "rates"),
-            //@Mapping(source = "regulationRatesList", target = "regulationRates"),
-            @Mapping(source = "supersedesList", target = "supersedes")
+//            @Mapping(source = "ratesList", target = "rates"),
+//            @Mapping(source = "regulationRatesList", target = "regulationRates"),
+//            @Mapping(source = "supersedesList", target = "supersedes")
     })
     public abstract TariffSpecification map(PBTariffSpecification in);
     //public abstract TariffSpecification map(PBTariffSpecification in, @MappingTarget TariffSpecification out);
@@ -53,9 +54,9 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
 
     @AfterMapping
     void cleanExpiration(PBTariffSpecification in, @MappingTarget TariffSpecification out){
-        if (in.getExpiration() == 0){
-            out.withExpiration(null);
-        }
+//        if (in.getExpiration() == 0){
+//            out.withExpiration(null);
+//        }
     }
 
     public PBTariffSpecification map(PBTariffSpecification.Builder tariffSpecification){
@@ -79,7 +80,7 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
         @ObjectFactory
         //TODO not really along the concept of the framework here to do so much by hand.
         TariffSpecification builder(PBTariffSpecification in) {
-            Broker broker = repo.findByUsername(in.getBroker());
+            Broker broker = new Broker(in.getBroker());
             PowerType pt = PowerTypeMapper.INSTANCE.map(in.getPowerType());
             TariffSpecification out = new TariffSpecification(broker, pt);
             List<PBRate> rates = in.getRatesList();
@@ -92,8 +93,8 @@ public abstract class TariffSpecificationMapper implements AbstractPbPtacMapper<
                out.addRate(rrm.map(r));
             }
             //hacky way to make out.supersedes not null
-            out.addSupersedes(0l);
-            out.getSupersedes().clear();
+//            out.addSupersedes(0l);
+//            out.getSupersedes().clear();
             return builderSetId(in, out);
         }
     }

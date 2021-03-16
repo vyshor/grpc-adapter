@@ -201,7 +201,7 @@ public class MarketManagerService
    */
   public synchronized void handleMessage(MarketTransaction tx)
   {
-
+//    System.out.println(tx.toString());
     comm.marketStub.handlePBMarketTransaction(comm.converter.convert(tx));
   }
 
@@ -213,7 +213,7 @@ public class MarketManagerService
   public synchronized void handleMessage(Orderbook orderbook)
   {
 
-    comm.marketStub.handlePBOrderbook(comm.converter.convert(orderbook));
+//    comm.marketStub.handlePBOrderbook(comm.converter.convert(orderbook));
   }
 
   /**
@@ -221,7 +221,7 @@ public class MarketManagerService
    */
   public synchronized void handleMessage(WeatherForecast forecast)
   {
-    //comm.marketStub.handlePBWeatherForecast(comm.converter.convert(forecast));
+    comm.marketStub.handlePBWeatherForecast(comm.converter.convert(forecast));
   }
 
   /**
@@ -230,7 +230,7 @@ public class MarketManagerService
   public synchronized void handleMessage(WeatherReport report)
   {
 
-    //comm.marketStub.handlePBWeatherReport(comm.converter.convert(report));
+    comm.marketStub.handlePBWeatherReport(comm.converter.convert(report));
   }
 
   /**
@@ -240,7 +240,7 @@ public class MarketManagerService
   public synchronized void handleMessage(BalanceReport report)
   {
 
-    comm.marketStub.handlePBBalanceReport(comm.converter.convert(report));
+//    comm.marketStub.handlePBBalanceReport(comm.converter.convert(report));
   }
 
   // ----------- per-timeslot activation ---------------
@@ -254,6 +254,7 @@ public class MarketManagerService
   @Override
   public synchronized void activate(int timeslotIndex)
   {
+    System.out.println("Timeslot MarketManager activation");
   }
 
 }

@@ -27,6 +27,7 @@ import org.powertac.common.*;
 import org.powertac.common.enumerations.PowerType;
 import org.powertac.common.msg.*;
 import org.powertac.common.repo.BrokerRepo;
+import org.powertac.common.repo.TariffRepo;
 import org.powertac.common.repo.TimeslotRepo;
 import org.powertac.common.xml.BrokerConverter;
 import org.powertac.grpc.mappers.*;
@@ -50,6 +51,8 @@ public class GRPCTypeConverter
 
   @Autowired
   BrokerRepo brokerRepo;
+  @Autowired
+  TariffRepo tariffRepo;
   @Autowired
   TimeslotRepo timeslotRepo;
   Logger log = LogManager.getLogger(GRPCTypeConverter.class);
@@ -499,6 +502,7 @@ public class GRPCTypeConverter
       //parsing all different types from string
       String value = next.getValue();
       if (fieldByName == null) continue;
+      if ((in instanceof WeatherForecast) && (next.getKey().equals("currentTimeslot"))) continue;
       try {
         if(fieldByName.isRepeated()){
           //skipping repeated fields right away

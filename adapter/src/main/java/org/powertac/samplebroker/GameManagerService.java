@@ -24,6 +24,7 @@ import org.powertac.grpc.GrpcServiceChannel;
 import org.powertac.grpc.mappers.BrokerAcceptMapper;
 import org.powertac.samplebroker.interfaces.BrokerContext;
 import org.powertac.samplebroker.interfaces.Initializable;
+import org.powertac.samplebroker.interfaces.MarketManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,9 @@ public class GameManagerService implements Initializable
   static private Logger log = LogManager.getLogger(ContextManagerService.class);
   @Autowired
   GrpcServiceChannel comm;
+
+  @Autowired
+  MarketManagerService marketManagerService;
 
   @Override
   public void initialize(BrokerContext broker){
@@ -53,6 +57,7 @@ public class GameManagerService implements Initializable
     comm.gameStub.handlePBTimeslotUpdate(comm.converter.convert(message));
   }
   public synchronized void handleMessage(TimeslotComplete message){
+    System.out.println("Start of Timeslot: "+ (message.getTimeslotIndex()+1));
     comm.gameStub.handlePBTimeslotComplete(comm.converter.convert(message));
   }
 

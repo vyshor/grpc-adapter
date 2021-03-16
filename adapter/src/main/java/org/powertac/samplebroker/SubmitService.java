@@ -7,6 +7,8 @@ import de.pascalwhoop.powertac.grpc.PBTariffRevoke;
 import de.pascalwhoop.powertac.grpc.PBTariffSpecification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.powertac.common.TariffSpecification;
+import org.powertac.common.repo.TariffRepo;
 import org.powertac.grpc.GrpcServiceChannel;
 import org.powertac.grpc.mappers.AbstractPbPtacMapper;
 import org.powertac.grpc.mappers.OrderMapper;
@@ -16,8 +18,10 @@ import org.powertac.samplebroker.core.MessageDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This service takes the messages passed from the python part of the agent and passes it along to the server. It's multithreaded because the iterators are blocking.
@@ -29,6 +33,10 @@ public class SubmitService {
     GrpcServiceChannel comm;
     @Autowired
     MessageDispatcher dispatcher;
+    @Autowired
+    TariffRepo tariffRepo;
+
+    List<TariffSpecification> tariffSpecificationList = new ArrayList<>();
 
     boolean disconnect = false;
     LinkedList<Thread> threads = new LinkedList<>();
@@ -70,11 +78,22 @@ public class SubmitService {
             while (iter.hasNext()) {
                 P nextPBMsg = iter.next();
                 T msg = mapper.map(nextPBMsg);
-                dispatcher.sendMessage(msg);
+                // Not clean code, but required, otherwise there is no reference to TariffSpecification upon customer subscription
+                if (msg instanceof TariffSpecification) {
+//                    System.out.println("Converting to TariffSpec");
+                    TariffSpecification tariffSpecification = (TariffSpecification) msg;
+                    tariffRepo.addSpecification(tariffSpecification);
+                    dispatcher.sendMessage(tariffSpecification);
+                } else {
+                    dispatcher.sendMessage(msg);
+                }
+//                dispatcher.sendMessage(msg);
 
                 if (this.checkInterrupted()) break;
             }
         } catch (RuntimeException ex) {
+            System.out.println("Exception in connecting receiver");
+            System.out.println(ex.toString());
             log.error("exception in connecting receiver");
             log.error(ex);
         }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-IMAGE=pascalwhoop/powertac-grpc-adapter
+IMAGE=vyshor/powertac-grpc-adapter
 if [ $# -eq 0 ]
   then
       tag='latest'

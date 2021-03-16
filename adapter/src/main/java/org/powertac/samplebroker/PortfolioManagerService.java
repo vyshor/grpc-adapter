@@ -249,56 +249,67 @@ public class PortfolioManagerService
   public synchronized void handleMessage(TariffTransaction ttx)
   {
     comm.portfolioStub.handlePBTariffTransaction(comm.converter.convert(ttx));
+//    System.out.println("New tarff transaction");
+//    System.out.println(ttx.getTariffSpec());
 
     // make sure we have this tariff
-    TariffSpecification newSpec = ttx.getTariffSpec();
-    if (newSpec == null) {
-      log.error("TariffTransaction type=" + ttx.getTxType()
-          + " for unknown spec");
-    }
-    else {
-      TariffSpecification oldSpec =
-          tariffRepo.findSpecificationById(newSpec.getId());
-      if (oldSpec != newSpec) {
-        log.error("Incoming spec " + newSpec.getId() + " not matched in repo");
-      }
-    }
-    TariffTransaction.Type txType = ttx.getTxType();
-    CustomerRecord record = getCustomerRecordByTariff(ttx.getTariffSpec(),
-        ttx.getCustomerInfo());
-
-    if (TariffTransaction.Type.SIGNUP == txType) {
-      // keep track of customer counts
-      record.signup(ttx.getCustomerCount());
-    }
-    else if (TariffTransaction.Type.WITHDRAW == txType) {
-      // customers presumably found a better deal
-      record.withdraw(ttx.getCustomerCount());
-    }
-    else if (ttx.isRegulation()) {
-      // Regulation transaction -- we record it as production/consumption
-      // to avoid distorting the customer record. 
-      log.debug("Regulation transaction from {}, {} kWh for {}",
-          ttx.getCustomerInfo().getName(),
-          ttx.getKWh(), ttx.getCharge());
-      record.produceConsume(ttx.getKWh(), ttx.getPostedTime());
-    }
-    else if (TariffTransaction.Type.PRODUCE == txType) {
-      // if ttx count and subscribe population don't match, it will be hard
-      // to estimate per-individual production
-      if (ttx.getCustomerCount() != record.subscribedPopulation) {
-        log.warn("production by subset {}  of subscribed population {}",
-            ttx.getCustomerCount(), record.subscribedPopulation);
-      }
-      record.produceConsume(ttx.getKWh(), ttx.getPostedTime());
-    }
-    else if (TariffTransaction.Type.CONSUME == txType) {
-      if (ttx.getCustomerCount() != record.subscribedPopulation) {
-        log.warn("consumption by subset {} of subscribed population {}",
-            ttx.getCustomerCount(), record.subscribedPopulation);
-      }
-      record.produceConsume(ttx.getKWh(), ttx.getPostedTime());
-    }
+//    TariffSpecification newSpec = ttx.getTariffSpec();
+//    if (newSpec == null) {
+//      log.error("TariffTransaction type=" + ttx.getTxType()
+//          + " for unknown spec");
+//    }
+//    else {
+//      TariffSpecification oldSpec =
+//          tariffRepo.findSpecificationById(newSpec.getId());
+//      if (oldSpec != newSpec) {
+//        log.error("Incoming spec " + newSpec.getId() + " not matched in repo");
+//      }
+//    }
+//    TariffTransaction.Type txType = ttx.getTxType();
+//    CustomerRecord record = getCustomerRecordByTariff(ttx.getTariffSpec(),
+//        ttx.getCustomerInfo());
+//
+//    if (TariffTransaction.Type.SIGNUP == txType) {
+//      // keep track of customer counts
+//      System.out.println("New Sign Up");
+//      System.out.println(ttx);
+//      System.out.println(ttx.getCustomerInfo());
+//      System.out.println(ttx.getCustomerCount());
+//
+//      System.out.println(ttx.getTariffSpec().getId());
+//      System.out.println(ttx.getTariffSpec().toString());
+//
+//    }
+//    else if (TariffTransaction.Type.WITHDRAW == txType) {
+//      // customers presumably found a better deal
+//      record.withdraw(ttx.getCustomerCount());
+//    }
+//    else if (ttx.isRegulation()) {
+//      // Regulation transaction -- we record it as production/consumption
+//      // to avoid distorting the customer record.
+//      log.debug("Regulation transaction from {}, {} kWh for {}",
+//          ttx.getCustomerInfo().getName(),
+//          ttx.getKWh(), ttx.getCharge());
+//      record.produceConsume(ttx.getKWh(), ttx.getPostedTime());
+//    }
+//    else if (TariffTransaction.Type.PRODUCE == txType) {
+//      // if ttx count and subscribe population don't match, it will be hard
+//      // to estimate per-individual production
+//      if (ttx.getCustomerCount() != record.subscribedPopulation) {
+//        log.warn("production by subset {}  of subscribed population {}",
+//            ttx.getCustomerCount(), record.subscribedPopulation);
+//      }
+//      record.produceConsume(ttx.getKWh(), ttx.getPostedTime());
+//    }
+//    else if (TariffTransaction.Type.CONSUME == txType) {
+//      System.out.println("Consumption");
+//      System.out.println(ttx);
+//      System.out.println(ttx.getCustomerInfo());
+//      System.out.println(ttx.getCustomerCount());
+//
+//      System.out.println(ttx.getTariffSpec().getId());
+//      System.out.println(ttx.getTariffSpec().toString());
+//    }
   }
 
   /**
@@ -310,28 +321,28 @@ public class PortfolioManagerService
     //sending to python component
     comm.portfolioStub.handlePBTariffRevoke(comm.converter.convert(tr));
 
-    Broker source = tr.getBroker();
-    log.info("Revoke tariff " + tr.getTariffId()
-        + " from " + tr.getBroker().getUsername());
-    // if it's from some other broker, we need to remove it from the
-    // tariffRepo, and from the competingTariffs list
-    if (!(source.getUsername().equals(brokerContext.getBrokerUsername()))) {
-      log.info("clear out competing tariff");
-      TariffSpecification original =
-          tariffRepo.findSpecificationById(tr.getTariffId());
-      if (null == original) {
-        log.warn("Original tariff " + tr.getTariffId() + " not found");
-        return;
-      }
-      tariffRepo.removeSpecification(original.getId());
-      List<TariffSpecification> candidates =
-          competingTariffs.get(original.getPowerType());
-      if (null == candidates) {
-        log.warn("Candidate list is null");
-        return;
-      }
-      candidates.remove(original);
-    }
+//    Broker source = tr.getBroker();
+//    log.info("Revoke tariff " + tr.getTariffId()
+//        + " from " + tr.getBroker().getUsername());
+//    // if it's from some other broker, we need to remove it from the
+//    // tariffRepo, and from the competingTariffs list
+//    if (!(source.getUsername().equals(brokerContext.getBrokerUsername()))) {
+//      log.info("clear out competing tariff");
+//      TariffSpecification original =
+//          tariffRepo.findSpecificationById(tr.getTariffId());
+//      if (null == original) {
+//        log.warn("Original tariff " + tr.getTariffId() + " not found");
+//        return;
+//      }
+//      tariffRepo.removeSpecification(original.getId());
+//      List<TariffSpecification> candidates =
+//          competingTariffs.get(original.getPowerType());
+//      if (null == candidates) {
+//        log.warn("Candidate list is null");
+//        return;
+//      }
+//      candidates.remove(original);
+//    }
   }
 
   /**
@@ -352,16 +363,17 @@ public class PortfolioManagerService
   @Override // from Activatable
   public synchronized void activate(int timeslotIndex)
   {
-    if (customerSubscriptions.size() == 0) {
-      // we (most likely) have no tariffs
-      createInitialTariffs();
-    }
-    else {
-      // we have some, are they good enough?
-      improveTariffs();
-    }
-    for (CustomerRecord record : notifyOnActivation)
-      record.activate();
+    System.out.println("Timeslot PortfolioManager activation");
+//    if (customerSubscriptions.size() == 0) {
+//      // we (most likely) have no tariffs
+//      createInitialTariffs();
+//    }
+//    else {
+//      // we have some, are they good enough?
+//      improveTariffs();
+//    }
+//    for (CustomerRecord record : notifyOnActivation)
+//      record.activate();
   }
 
   // Creates initial tariffs for the main power types. These are simple

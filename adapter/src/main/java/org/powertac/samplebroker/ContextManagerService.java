@@ -102,7 +102,7 @@ public class ContextManagerService
   public void handleMessage(Competition comp)
   {
     // is already handled in MarketManagerService
-    //comm.contextStub.handlePBCompetition(comm.converter.convert(comp));
+    comm.contextStub.handlePBCompetition(comm.converter.convert(comp));
   }
 
   /**
